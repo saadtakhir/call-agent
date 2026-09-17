@@ -1,0 +1,320 @@
+:root {
+  --bg: #f4f5f9;
+  --card: #ffffff;
+  --border: #e2e4ee;
+  --text: #171826;
+  --muted: #6b6f85;
+  --accent: #5b5ff5;
+  --accent-hover: #4a4de0;
+  --green: #178a4c;
+  --green-bg: #e1f5e9;
+  --red: #d64545;
+  --red-bg: #fce8e8;
+  --amber: #b3660a;
+  --amber-bg: #fbebd6;
+  --gray-bg: #eceefa;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+h1, h2, h3 {
+  margin: 0 0 4px;
+}
+
+a {
+  color: inherit;
+}
+
+.container {
+  max-width: 880px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+/* --- topbar --- */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 24px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+}
+.topbar-brand {
+  font-weight: 700;
+  font-size: 1.02rem;
+}
+.topbar-nav {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+}
+.topbar-nav a {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  text-decoration: none;
+  color: var(--muted);
+  font-weight: 500;
+  font-size: 0.9rem;
+}
+.topbar-nav a:hover {
+  background: var(--gray-bg);
+}
+.topbar-nav a.active {
+  background: var(--accent);
+  color: #fff;
+}
+
+/* --- buttons --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 16px;
+  border: none;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #fff;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+.btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.btn-green {
+  background: var(--green);
+}
+.btn-green:hover:not(:disabled) {
+  background: #146e3c;
+}
+.btn-danger {
+  background: var(--red);
+}
+.btn-danger:hover:not(:disabled) {
+  background: #b93a3a;
+}
+.btn-outline {
+  background: var(--card);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-outline:hover:not(:disabled) {
+  background: var(--gray-bg);
+}
+.btn-icon {
+  padding: 8px;
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- layout helpers --- */
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+.section {
+  margin-top: 22px;
+}
+
+/* --- banners --- */
+.error-banner {
+  background: var(--red-bg);
+  color: #8a2b2b;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 0.88rem;
+}
+.success-banner {
+  background: var(--green-bg);
+  color: var(--green);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 0.88rem;
+}
+
+/* --- status pills --- */
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+.status-gray {
+  background: var(--gray-bg);
+  color: var(--muted);
+}
+.status-green {
+  background: var(--green-bg);
+  color: var(--green);
+}
+.status-amber {
+  background: var(--amber-bg);
+  color: var(--amber);
+}
+
+/* --- inputs --- */
+.manage-input {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 9px 12px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  background: var(--card);
+  color: var(--text);
+}
+.manage-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: -1px;
+}
+
+.add-channel-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* --- tables --- */
+.table-scroll {
+  overflow-x: auto;
+}
+.analog-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.analog-table th {
+  text-align: center;
+  padding: 8px 10px;
+  color: var(--muted);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border);
+}
+.analog-table td {
+  padding: 10px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  text-align: center;
+}
+
+/* --- tab toggle (segmented control) --- */
+.tab-toggle {
+  display: flex;
+  background: var(--bg);
+  border-radius: 999px;
+  padding: 4px;
+  gap: 2px;
+}
+.tab-toggle button {
+  border: none;
+  background: transparent;
+  padding: 8px 18px;
+  border-radius: 999px;
+  font-weight: 500;
+  font-size: 0.88rem;
+  cursor: pointer;
+  color: var(--text);
+}
+.tab-toggle button.active {
+  background: var(--accent);
+  color: #fff;
+}
+.tab-toggle button:disabled {
+  cursor: default;
+  color: var(--muted);
+}
+
+/* --- confirm dialog --- */
+.confirm-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(10, 10, 20, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+.confirm-card {
+  background: var(--card);
+  border-radius: 12px;
+  padding: 22px 24px;
+  max-width: 360px;
+  width: 90%;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+.confirm-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+/* --- login page --- */
+.login-wrap {
+  min-height: calc(100vh - 60px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.login-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 32px 30px;
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.login-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+.login-field input {
+  font-weight: 400;
+  color: var(--text);
+}

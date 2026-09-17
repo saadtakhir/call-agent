@@ -1,0 +1,1814 @@
+[
+    {
+        "id": 14,
+        "code": "Andijan",
+        "label": "Андижон вилояти",
+        "name": "Андижон вилояти",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 202,
+                "code": "ANDIJON_R",
+                "label": "Андижон тумани",
+                "name": "Андижон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 217,
+                "code": "ANDIJON_C",
+                "label": "Андижон шаҳри",
+                "name": "Андижон шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 204,
+                "code": "ASAKA_R",
+                "label": "Асака тумани",
+                "name": "Асака тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 205,
+                "code": "BALIQCHI_R",
+                "label": "Балиқчи тумани",
+                "name": "Балиқчи тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 206,
+                "code": "BULOQBOSHI_R",
+                "label": "Булоқбоши тумани",
+                "name": "Булоқбоши тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 207,
+                "code": "BUZ_R",
+                "label": "Бўстон тумани",
+                "name": "Бўстон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 208,
+                "code": "JALAQUDUQ_R",
+                "label": "Жалақудуқ тумани",
+                "name": "Жалақудуқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 209,
+                "code": "IZBOSKAN_R",
+                "label": "Избоскан тумани",
+                "name": "Избоскан тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 216,
+                "code": "QURGONTEPA_R",
+                "label": "Қўрғонтепа тумани",
+                "name": "Қўрғонтепа тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 210,
+                "code": "MARHAMAT_R",
+                "label": "Марҳамат тумани",
+                "name": "Марҳамат тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 211,
+                "code": "OLTINKUL_R",
+                "label": "Олтинкўл тумани",
+                "name": "Олтинкўл тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 212,
+                "code": "PAXTAOBOD_R",
+                "label": "Пахтаобод тумани",
+                "name": "Пахтаобод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 213,
+                "code": "ULUGNOR_R",
+                "label": "Улуғнор тумани",
+                "name": "Улуғнор тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 203,
+                "code": "XONOBOD_C",
+                "label": "Хонобод шаҳри",
+                "name": "Хонобод шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 214,
+                "code": "XUJAOBOD_R",
+                "label": "Хўжаобод тумани",
+                "name": "Хўжаобод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 215,
+                "code": "SHAHRIXON_R",
+                "label": "Шаҳрихон тумани",
+                "name": "Шаҳрихон тумани",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 3,
+        "code": "Bukhara",
+        "label": "Бухоро вилояти",
+        "name": "Бухоро вилояти",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 38,
+                "code": "BUXORO_R",
+                "label": "Бухоро тумани",
+                "name": "Бухоро тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 39,
+                "code": "BUXORO_C",
+                "label": "Бухоро шаҳри",
+                "name": "Бухоро шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 40,
+                "code": "VOBKENT_R",
+                "label": "Вобкент тумани",
+                "name": "Вобкент тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 47,
+                "code": "GIJDUVON_R",
+                "label": "Ғиждувон тумани",
+                "name": "Ғиждувон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 41,
+                "code": "JONDOR_R",
+                "label": "Жондор тумани",
+                "name": "Жондор тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 42,
+                "code": "KOGON_R",
+                "label": "Когон тумани",
+                "name": "Когон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 17721,
+                "code": "KOGON_C",
+                "label": "Когон шаҳри",
+                "name": "Когон шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 48,
+                "code": "QORAKUL_R",
+                "label": "Қоракўл тумани",
+                "name": "Қоракўл тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 49,
+                "code": "QOROVULBOZOR_R",
+                "label": "Қоровулбозор тумани",
+                "name": "Қоровулбозор тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 43,
+                "code": "OLOT_R",
+                "label": "Олот тумани",
+                "name": "Олот тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 44,
+                "code": "PESHKU_R",
+                "label": "Пешку тумани",
+                "name": "Пешку тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 238,
+                "code": "ROMITAN_R",
+                "label": "Ромитан тумани",
+                "name": "Ромитан тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 46,
+                "code": "SHOFIRKON_R",
+                "label": "Шофиркон тумани",
+                "name": "Шофиркон тумани",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 7,
+        "code": "Jizzakh",
+        "label": "Жиззах вилояти",
+        "name": "Жиззах вилояти",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 93,
+                "code": "АRNASOY_R",
+                "label": "Арнасой тумани",
+                "name": "Арнасой тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 94,
+                "code": "BAXMAL_R",
+                "label": "Бахмал тумани",
+                "name": "Бахмал тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 106,
+                "code": "GALLAOROL_R",
+                "label": "Ғаллаорол тумани",
+                "name": "Ғаллаорол тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 95,
+                "code": "DUSTLIK_R",
+                "label": "Дўстлик тумани",
+                "name": "Дўстлик тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 96,
+                "code": "JIZZAX_R",
+                "label": "Жиззах тумани",
+                "name": "Жиззах тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 97,
+                "code": "JIZZAX_C",
+                "label": "Жиззах шаҳри",
+                "name": "Жиззах шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 98,
+                "code": "ZARBDOR_R",
+                "label": "Зарбдор тумани",
+                "name": "Зарбдор тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 99,
+                "code": "ZAFAROBOD_R",
+                "label": "Зафаробод тумани",
+                "name": "Зафаробод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 100,
+                "code": "ZOMIN_R",
+                "label": "Зомин тумани",
+                "name": "Зомин тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 101,
+                "code": "MIRZACHUL_R",
+                "label": "Мирзачўл тумани",
+                "name": "Мирзачўл тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 102,
+                "code": "PAXTAKOR_R",
+                "label": "Пахтакор тумани",
+                "name": "Пахтакор тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 103,
+                "code": "FORISH_R",
+                "label": "Фориш тумани",
+                "name": "Фориш тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 104,
+                "code": "SH_RASHIDOV_R",
+                "label": "Шароф Рашидов тумани",
+                "name": "Шароф Рашидов тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 105,
+                "code": "YANGIOBOD_R",
+                "label": "Янгиобод тумани",
+                "name": "Янгиобод тумани",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 8,
+        "code": "Kashkadarya",
+        "label": "Қашқадарё вилояти",
+        "name": "Қашқадарё вилояти",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 117,
+                "code": "GUZOR_R",
+                "label": "Ғузор туман",
+                "name": "Ғузор туман",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 107,
+                "code": "DEHQONOBOD_R",
+                "label": "Деҳқонобод тумани",
+                "name": "Деҳқонобод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 108,
+                "code": "KASBI_R",
+                "label": "Касби тумани",
+                "name": "Касби тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 109,
+                "code": "KITOB_R",
+                "label": "Китоб тумани",
+                "name": "Китоб тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 230,
+                "code": "KOSON_R",
+                "label": "Косон тумани",
+                "name": "Косон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 10413,
+                "code": "KOKDALA_R",
+                "label": "Кўкдала тумани",
+                "name": "Кўкдала тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 118,
+                "code": "QAMASHI_R",
+                "label": "Қамаши тумани",
+                "name": "Қамаши тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 119,
+                "code": "QARSHI_R",
+                "label": "Қарши тумани",
+                "name": "Қарши тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 120,
+                "code": "QARSHI_C",
+                "label": "Қарши шаҳри",
+                "name": "Қарши шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 111,
+                "code": "MIRISHKOR_R",
+                "label": "Миришкор тумани",
+                "name": "Миришкор тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 112,
+                "code": "MUBORAK_R",
+                "label": "Муборак тумани",
+                "name": "Муборак тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 113,
+                "code": "NISHON_R",
+                "label": "Нишон тумани",
+                "name": "Нишон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 114,
+                "code": "CHIROQCHI_R",
+                "label": "Чироқчи тумани",
+                "name": "Чироқчи тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 115,
+                "code": "SHAXRISABZ_R",
+                "label": "Шаҳрисабз тумани",
+                "name": "Шаҳрисабз тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 245,
+                "code": "SHAXRISABZ_C",
+                "label": "Шаҳрисабз шаҳри",
+                "name": "Шаҳрисабз шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 116,
+                "code": "YAKKABOG_R",
+                "label": "Яккабоғ тумани",
+                "name": "Яккабоғ тумани",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 5,
+        "code": "Karakalpakstan",
+        "label": "Қорақолпоғистон Республикаси",
+        "name": "Қорақолпоғистон Республикаси",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 59,
+                "code": "АMUDARYO_R",
+                "label": "Амударё тумани",
+                "name": "Амударё тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 60,
+                "code": "BERUNIY_R",
+                "label": "Беруний тумани",
+                "name": "Беруний тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 711,
+                "code": "BUZATOV_R",
+                "label": "Бўзатов тумани",
+                "name": "Бўзатов тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 61,
+                "code": "KEGEYLI_R",
+                "label": "Кегейли тумани",
+                "name": "Кегейли тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 71,
+                "code": "QANLIKUL_R",
+                "label": "Қанликўл тумани",
+                "name": "Қанликўл тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 62,
+                "code": "QORAUZAK_R",
+                "label": "Қораўзак тумани",
+                "name": "Қораўзак тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 73,
+                "code": "QUNGIROT_R",
+                "label": "Қўнғирот тумани",
+                "name": "Қўнғирот тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 63,
+                "code": "MUYNOQ_R",
+                "label": "Мўйноқ тумани",
+                "name": "Мўйноқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 242,
+                "code": "NUKUS_R",
+                "label": "Нукус тумани",
+                "name": "Нукус тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 236,
+                "code": "NUKUS_C",
+                "label": "Нукус шаҳри",
+                "name": "Нукус шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 244,
+                "code": "TAXIATOSH_R",
+                "label": "Тахиатош тумани",
+                "name": "Тахиатош тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 65,
+                "code": "TAXTAKUPIR_C",
+                "label": "Тахтакўпир тумани",
+                "name": "Тахтакўпир тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 66,
+                "code": "TURTKUL_R",
+                "label": "Тўрткўл тумани",
+                "name": "Тўрткўл тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 67,
+                "code": "XUJAYLI_R",
+                "label": "Хўжайли тумани",
+                "name": "Хўжайли тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 68,
+                "code": "CHIMBOY_R",
+                "label": "Чимбой тумани",
+                "name": "Чимбой тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 74,
+                "code": "SHUMANAY_R",
+                "label": "Шуманай тумани",
+                "name": "Шуманай тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 70,
+                "code": "ELLIKQALA_R",
+                "label": "Элликқалъа тумани",
+                "name": "Элликқалъа тумани",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 4,
+        "code": "Navaiy",
+        "label": "Навоий вилояти",
+        "name": "Навоий вилояти",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 246,
+                "code": "ZARAFSHON_C",
+                "label": "Зарафшон шаҳри",
+                "name": "Зарафшон шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 50,
+                "code": "KARMANA_R",
+                "label": "Кармана тумани",
+                "name": "Кармана тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 51,
+                "code": "KONIMEX_R",
+                "label": "Конимех тумани",
+                "name": "Конимех тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 247,
+                "code": "QIZILTEPA_R",
+                "label": "Қизилтепа тумани",
+                "name": "Қизилтепа тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 52,
+                "code": "NAVBAHOR_R",
+                "label": "Навбаҳор тумани",
+                "name": "Навбаҳор тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 227,
+                "code": "NAVOIY_C",
+                "label": "Навоий шаҳри",
+                "name": "Навоий шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 54,
+                "code": "NUROTA_R",
+                "label": "Нурота тумани",
+                "name": "Нурота тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 58,
+                "code": "TOMDI_R",
+                "label": "Томди тумани",
+                "name": "Томди тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 56,
+                "code": "UCHQUDUQ_R",
+                "label": "Учқудуқ тумани",
+                "name": "Учқудуқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 57,
+                "code": "XATIRCHI_R",
+                "label": "Хатирчи тумани",
+                "name": "Хатирчи тумани",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 12,
+        "code": "Namangan",
+        "label": "Наманган вилояти",
+        "name": "Наманган вилояти",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 171,
+                "code": "KOSONSOY_R",
+                "label": "Косонсой тумани",
+                "name": "Косонсой тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 172,
+                "code": "MINGBULOQ_R",
+                "label": "Мингбулоқ тумани",
+                "name": "Мингбулоқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 173,
+                "code": "NAMANGAN_R",
+                "label": "Наманган тумани",
+                "name": "Наманган тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 174,
+                "code": "NAMANGAN_C",
+                "label": "Наманган шаҳри",
+                "name": "Наманган шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 175,
+                "code": "NORIN_R",
+                "label": "Норин тумани",
+                "name": "Норин тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 176,
+                "code": "POP_R",
+                "label": "Поп тумани",
+                "name": "Поп тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 177,
+                "code": "TURAQURGON_R",
+                "label": "Тўрақўрғон тумани",
+                "name": "Тўрақўрғон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 178,
+                "code": "UYCHI_R",
+                "label": "Уйчи тумани",
+                "name": "Уйчи тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 179,
+                "code": "UCHQURGON_R",
+                "label": "Учқўрғон тумани",
+                "name": "Учқўрғон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 180,
+                "code": "CHORTOQ_R",
+                "label": "Чортоқ тумани",
+                "name": "Чортоқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 181,
+                "code": "CHUST_R",
+                "label": "Чуст тумани",
+                "name": "Чуст тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 182,
+                "code": "YANGIQURGON_R",
+                "label": "Янгиқўрғон тумани",
+                "name": "Янгиқўрғон тумани",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 6,
+        "code": "Samarkand",
+        "label": "Самарқанд вилояти",
+        "name": "Самарқанд вилояти",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 75,
+                "code": "BULUNGUR_R",
+                "label": "Булунғур тумани",
+                "name": "Булунғур тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 76,
+                "code": "JOMBOY_R",
+                "label": "Жомбой тумани",
+                "name": "Жомбой тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 466,
+                "code": null,
+                "label": "Жума тумани",
+                "name": "Жума тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 77,
+                "code": "ISHTIXON_R",
+                "label": "Иштихон тумани",
+                "name": "Иштихон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 78,
+                "code": "KATTAQURGON_R",
+                "label": "Каттақўрғон тумани",
+                "name": "Каттақўрғон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 79,
+                "code": "KATTAQURGON_C",
+                "label": "Каттақўрғон шаҳри",
+                "name": "Каттақўрғон шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 90,
+                "code": "QUSHRABOT_R",
+                "label": "Қўшработ тумани",
+                "name": "Қўшработ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 80,
+                "code": "NARPAY_R",
+                "label": "Нарпай тумани",
+                "name": "Нарпай тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 81,
+                "code": "NUROBOD_R",
+                "label": "Нуробод тумани",
+                "name": "Нуробод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 82,
+                "code": "OQDARYO_R",
+                "label": "Оқдарё тумани",
+                "name": "Оқдарё тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 85,
+                "code": "PASTDARGOM_R",
+                "label": "Пастдарғом тумани",
+                "name": "Пастдарғом тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 86,
+                "code": "PAXTACHI_R",
+                "label": "Пахтачи тумани",
+                "name": "Пахтачи тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 84,
+                "code": "PAYARIQ_R",
+                "label": "Паяриқ тумани",
+                "name": "Паяриқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 87,
+                "code": "SAMARQAND_R",
+                "label": "Самарқанд тумани",
+                "name": "Самарқанд тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 92,
+                "code": "SAMARQAND_C",
+                "label": "Самарқанд шаҳри",
+                "name": "Самарқанд шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 88,
+                "code": "TOYLOQ_R",
+                "label": "Тойлоқ тумани",
+                "name": "Тойлоқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 91,
+                "code": "URGUT_C",
+                "label": "Ургут тумани",
+                "name": "Ургут тумани",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 10,
+        "code": "Sirdarya",
+        "label": "Сирдарё вилояти",
+        "name": "Сирдарё вилояти",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 135,
+                "code": "BOYOVUT_R",
+                "label": "Боёвут тумани",
+                "name": "Боёвут тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 136,
+                "code": "GULISTON_R",
+                "label": "Гулистон тумани",
+                "name": "Гулистон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 137,
+                "code": "GULISTON_C",
+                "label": "Гулистон шаҳри",
+                "name": "Гулистон шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 138,
+                "code": "MEHNATOBOD_R",
+                "label": "Меҳнатобод тумани",
+                "name": "Меҳнатобод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 139,
+                "code": "MIRZAOBOD_R",
+                "label": "Мирзаобод тумани",
+                "name": "Мирзаобод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 141,
+                "code": "OQOLTIN_R",
+                "label": "Оқолтин тумани",
+                "name": "Оқолтин тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 143,
+                "code": "SAYXUNOBOD_R",
+                "label": "Сайхунобод тумани",
+                "name": "Сайхунобод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 142,
+                "code": "SARDOBA_R",
+                "label": "Сардоба тумани",
+                "name": "Сардоба тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 144,
+                "code": "SIRDARYO_R",
+                "label": "Сирдарё тумани",
+                "name": "Сирдарё тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 145,
+                "code": "XOVOS_R",
+                "label": "Ховос тумани",
+                "name": "Ховос тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 146,
+                "code": "SHIRIN_R",
+                "label": "Ширин шаҳри",
+                "name": "Ширин шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 147,
+                "code": "YANGYER_C",
+                "label": "Янгиер шахри ",
+                "name": "Янгиер шахри ",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 9,
+        "code": "Surkhandarya",
+        "label": "Сурхондарё вилояти",
+        "name": "Сурхондарё вилояти",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 121,
+                "code": "АNGOR_R",
+                "label": "Ангор тумани",
+                "name": "Ангор тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 2961,
+                "code": "BANDIXON_R",
+                "label": "Бандихон тумани",
+                "name": "Бандихон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 122,
+                "code": "BOYSUN_R",
+                "label": "Бойсун тумани",
+                "name": "Бойсун тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 248,
+                "code": "DENOV_R",
+                "label": "Денов тумани",
+                "name": "Денов тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 124,
+                "code": "JARQURGON_R",
+                "label": "Жарқўрғон тумани",
+                "name": "Жарқўрғон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 133,
+                "code": "QIZIRIQ_R",
+                "label": "Қизириқ тумани",
+                "name": "Қизириқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 232,
+                "code": "QUMQURGON_R",
+                "label": "Қумқўрғон тумани",
+                "name": "Қумқўрғон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 2960,
+                "code": "MUZROBOD_R",
+                "label": "Музработ тумани",
+                "name": "Музработ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 126,
+                "code": "OLTINSOY_R",
+                "label": "Олтинсой тумани",
+                "name": "Олтинсой тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 127,
+                "code": "SARIOSIYO_R",
+                "label": "Сариосиё тумани",
+                "name": "Сариосиё тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 128,
+                "code": "TERMIZ_R",
+                "label": "Термиз тумани",
+                "name": "Термиз тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 129,
+                "code": "TERMIZ_C",
+                "label": "Термиз шаҳри",
+                "name": "Термиз шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 130,
+                "code": "UZUN_R",
+                "label": "Узун тумани",
+                "name": "Узун тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 131,
+                "code": "SHEROBOD_R",
+                "label": "Шеробод тумани",
+                "name": "Шеробод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 132,
+                "code": "SHURCHI_R",
+                "label": "Шўрчи тумани",
+                "name": "Шўрчи тумани",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 11,
+        "code": "TashkentRegion",
+        "label": "Тошкент вилояти",
+        "name": "Тошкент вилояти",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 149,
+                "code": "АNGREN_C",
+                "label": "Ангрен шаҳри",
+                "name": "Ангрен шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 156,
+                "code": "BEKOBOD_R",
+                "label": "Бекобод тумани",
+                "name": "Бекобод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 150,
+                "code": "BEKOBOD_C",
+                "label": "Бекобод шаҳри",
+                "name": "Бекобод шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 157,
+                "code": "BUKA_R",
+                "label": "Бўка тумани",
+                "name": "Бўка тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 151,
+                "code": "BUSTONLIQ_R",
+                "label": "Бўстонлиқ тумани",
+                "name": "Бўстонлиқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 159,
+                "code": "ZANGIOTA_R",
+                "label": "Зангиота тумани",
+                "name": "Зангиота тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 169,
+                "code": "QIBRAY_R",
+                "label": "Қибрай тумани",
+                "name": "Қибрай тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 170,
+                "code": "QUYICHIRCHIQ_R",
+                "label": "Қуйичирчиқ тумани",
+                "name": "Қуйичирчиқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 160,
+                "code": "NURAFSHON_C",
+                "label": "Нурафшон шаҳри",
+                "name": "Нурафшон шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 161,
+                "code": "OQQURGON_R",
+                "label": "Оққўрғон тумани",
+                "name": "Оққўрғон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 152,
+                "code": "OLMALIQ_C",
+                "label": "Олмалиқ шаҳри",
+                "name": "Олмалиқ шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 162,
+                "code": "OHANGARON_R",
+                "label": "Оҳангарон тумани",
+                "name": "Оҳангарон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 153,
+                "code": "OHANGARON_C",
+                "label": "Оҳангарон шаҳри",
+                "name": "Оҳангарон шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 164,
+                "code": "PARKENT_R",
+                "label": "Паркент тумани",
+                "name": "Паркент тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 165,
+                "code": "PSKENT_R",
+                "label": "Пискент тумани",
+                "name": "Пискент тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 163,
+                "code": "TOSHKENT_R",
+                "label": "Тошкент тумани",
+                "name": "Тошкент тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 148,
+                "code": "URTACHIRCHIQ_R",
+                "label": "Ўртачирчиқ тумани",
+                "name": "Ўртачирчиқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 166,
+                "code": "CHINOZ_R",
+                "label": "Чиноз тумани",
+                "name": "Чиноз тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 154,
+                "code": "CHIRCHIQ_C",
+                "label": "Чирчиқ шаҳри",
+                "name": "Чирчиқ шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 167,
+                "code": "YUQORICHIRCHIQ_R",
+                "label": "Юқоричирчиқ тумани",
+                "name": "Юқоричирчиқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 168,
+                "code": "YANGIYUL_R",
+                "label": "Янгийўл тумани",
+                "name": "Янгийўл тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 155,
+                "code": "YANGIYUL_C",
+                "label": "Янгийўл шаҳри",
+                "name": "Янгийўл шаҳри",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 2,
+        "code": "Tashkent",
+        "label": "Тошкент шаҳар",
+        "name": "Тошкент шаҳар",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 27,
+                "code": "BEKTEMIR_R",
+                "label": "Бектемир тумани",
+                "name": "Бектемир тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 28,
+                "code": "MIRZO_ULUGBEK_R",
+                "label": "Мирзо Улуғбек тумани",
+                "name": "Мирзо Улуғбек тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 29,
+                "code": "MIROBOD_R",
+                "label": "Миробод тумани",
+                "name": "Миробод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 30,
+                "code": "OLMAZOR_R",
+                "label": "Олмазор тумани",
+                "name": "Олмазор тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 31,
+                "code": "SIRGALI_R",
+                "label": "Сирғали тумани",
+                "name": "Сирғали тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 32,
+                "code": "UCHTEPA_R",
+                "label": "Учтепа тумани",
+                "name": "Учтепа тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 33,
+                "code": "CHILONZOR_C",
+                "label": "Чилонзор тумани",
+                "name": "Чилонзор тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 34,
+                "code": "SHAYHONTOXUR_R",
+                "label": "Шайхонтоҳур тумани",
+                "name": "Шайхонтоҳур тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 35,
+                "code": "YUNUSOBOD_R",
+                "label": "Юнусобод тумани",
+                "name": "Юнусобод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 36,
+                "code": "YAKKASAROY_R",
+                "label": "Яккасарой тумани",
+                "name": "Яккасарой тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 3562,
+                "code": "YANGIHAYOT_R",
+                "label": "Янги ҳаёт тумани",
+                "name": "Янги ҳаёт тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 37,
+                "code": "YASHNOBOD_R",
+                "label": "Яшнобод тумани",
+                "name": "Яшнобод тумани",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 13,
+        "code": "Fergana",
+        "label": "Фарғона вилояти",
+        "name": "Фарғона вилояти",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 185,
+                "code": "BAGDOD_R",
+                "label": "Бағдод тумани",
+                "name": "Бағдод тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 199,
+                "code": "BESHARIQ_R",
+                "label": "Бешариқ тумани",
+                "name": "Бешариқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 187,
+                "code": "BUVAYDA_R",
+                "label": "Бувайда тумани",
+                "name": "Бувайда тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 188,
+                "code": "DANGARA_R",
+                "label": "Данғара тумани",
+                "name": "Данғара тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 183,
+                "code": "YOZYOVON_R",
+                "label": "Ёзёвон тумани",
+                "name": "Ёзёвон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 191,
+                "code": "QUVASOY_C",
+                "label": "Қувасой шаҳри",
+                "name": "Қувасой шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 200,
+                "code": "QUVA_R",
+                "label": "Қува тумани",
+                "name": "Қува тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 192,
+                "code": "QUQON_C",
+                "label": "Қўқон шаҳри",
+                "name": "Қўқон шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 189,
+                "code": "QUSHTEPA_R",
+                "label": "Қўштепа тумани",
+                "name": "Қўштепа тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 201,
+                "code": "MARGILON_C",
+                "label": "Марғилон шахри",
+                "name": "Марғилон шахри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 193,
+                "code": "OLTIARIQ_R",
+                "label": "Олтиариқ тумани",
+                "name": "Олтиариқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 194,
+                "code": "RISHTON_R",
+                "label": "Риштон тумани",
+                "name": "Риштон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 4992,
+                "code": "SUX_R",
+                "label": "Сўх тумани",
+                "name": "Сўх тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 196,
+                "code": "TOSHLOQ_R",
+                "label": "Тошлоқ тумани",
+                "name": "Тошлоқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 184,
+                "code": "UZBEKISTON_R",
+                "label": "Ўзбекистон тумани",
+                "name": "Ўзбекистон тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 197,
+                "code": "UCHKUPRIK_R",
+                "label": "Учкўприк тумани",
+                "name": "Учкўприк тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 220,
+                "code": "FARGONA_R",
+                "label": "Фарғона тумани",
+                "name": "Фарғона тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 190,
+                "code": "FARGONA_C",
+                "label": "Фарғона шаҳри",
+                "name": "Фарғона шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 198,
+                "code": "FURQAT_R",
+                "label": "Фурқат тумани",
+                "name": "Фурқат тумани",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    },
+    {
+        "id": 1,
+        "code": "Khwarazm",
+        "label": "Хоразм вилояти",
+        "name": "Хоразм вилояти",
+        "parentId": null,
+        "children": null,
+        "district": [
+            {
+                "id": 16,
+                "code": "BOGOT_R",
+                "label": "Боғот тумани",
+                "name": "Боғот тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 17,
+                "code": "GURLAN_R",
+                "label": "Гурлан тумани",
+                "name": "Гурлан тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 26,
+                "code": "QUSHKUPIR_R",
+                "label": "Қўшкўпир тумани",
+                "name": "Қўшкўпир тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 452,
+                "code": "TUPROQQALA_R",
+                "label": "Тупроққалъа тумани",
+                "name": "Тупроққалъа тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 18,
+                "code": "URGANCH_R",
+                "label": "Урганч тумани",
+                "name": "Урганч тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 19,
+                "code": "URGANCH_C",
+                "label": "Урганч шаҳри",
+                "name": "Урганч шаҳри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 20,
+                "code": "XAZORASP_R",
+                "label": "Хазорасп тумани",
+                "name": "Хазорасп тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 21,
+                "code": "XIVA_R",
+                "label": "Хива тумани",
+                "name": "Хива тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 3427,
+                "code": "XIVA_C",
+                "label": "Хива шахри",
+                "name": "Хива шахри",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 591,
+                "code": null,
+                "label": "Хива шаҳри.",
+                "name": "Хива шаҳри.",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 22,
+                "code": "XONQA_R",
+                "label": "Хонқа тумани",
+                "name": "Хонқа тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 23,
+                "code": "SHOVOT_R",
+                "label": "Шовот тумани",
+                "name": "Шовот тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 24,
+                "code": "YANGIARIQ_R",
+                "label": "Янгиариқ тумани",
+                "name": "Янгиариқ тумани",
+                "parentId": null,
+                "children": null
+            },
+            {
+                "id": 25,
+                "code": "YANGIBOZOR_R",
+                "label": "Янгибозор тумани",
+                "name": "Янгибозор тумани",
+                "parentId": null,
+                "children": null
+            }
+        ]
+    }
+]

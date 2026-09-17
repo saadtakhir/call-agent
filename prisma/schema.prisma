@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model AppSetting {
+  key   String @id
+  value String
+}
+
+model PropertyLookupLog {
+  id             Int      @id @default(autoincrement())
+  search         String
+  resolvedSearch String?
+  regions        String?
+  category       String?
+  found          Boolean
+  title          String?
+  createdAt      DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model PropertyLead {
+  id         Int      @id @default(autoincrement())
+  propertyId String
+  name       String?
+  phone      String?
+  note       String?
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model AiCallSession {
+  sessionId      String   @id
+  lastResponseId String
+  updatedAt      DateTime @updatedAt
+}
+
+model CannedResponse {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  text      String
+  audioUrl  String?
+  updatedAt DateTime @updatedAt
+}
+
+model PropertyReplyAudio {
+  propertyId Int      @id
+  textHash   String
+  audioUrl   String
+  updatedAt  DateTime @updatedAt
+}

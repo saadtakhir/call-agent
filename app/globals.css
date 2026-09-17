@@ -56,8 +56,15 @@ a {
    instead and hides the mobile-only top bar entirely. */
 .app-shell {
   display: flex;
+  /* Column on mobile — Sidebar renders its mobile-topbar and the (fixed-
+     position, off-canvas) drawer as siblings of <main>, not wrapped in one
+     element, so without this they'd end up as flex-ROW items squeezed
+     next to the content instead of a full-width bar sitting above it. The
+     drawer/overlay themselves are position:fixed either way, so they don't
+     actually consume flow space in either direction — only the direction
+     switch below (once the sidebar docks as a real column) matters. */
+  flex-direction: column;
   min-height: 100vh;
-  align-items: flex-start;
 }
 
 .mobile-topbar {
@@ -163,6 +170,10 @@ a {
 }
 
 @media (min-width: 768px) {
+  .app-shell {
+    flex-direction: row;
+    align-items: flex-start;
+  }
   .mobile-topbar,
   .sidebar-overlay,
   .sidebar-close {

@@ -11,6 +11,14 @@ model AppSetting {
   value String
 }
 
+model User {
+  id           Int      @id @default(autoincrement())
+  username     String   @unique
+  passwordHash String
+  permissions  String[]
+  createdAt    DateTime @default(now())
+}
+
 model PropertyLookupLog {
   id             Int      @id @default(autoincrement())
   search         String

@@ -40,47 +40,65 @@ a {
   max-width: 880px;
   margin: 0 auto;
   padding: 28px 20px 60px;
+  flex: 1;
+  min-width: 0;
 }
 
 .muted {
   color: var(--muted);
 }
 
-/* --- topbar --- */
-.topbar {
+/* --- app shell / sidebar --- */
+.app-shell {
   display: flex;
-  align-items: center;
-  gap: 20px;
-  padding: 14px 24px;
-  background: var(--card);
-  border-bottom: 1px solid var(--border);
+  min-height: 100vh;
+  align-items: flex-start;
 }
-.topbar-brand {
+.sidebar {
+  width: 232px;
+  flex-shrink: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 14px;
+  background: var(--card);
+  border-right: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+}
+.sidebar-brand {
   font-weight: 700;
   font-size: 1.02rem;
+  padding: 4px 10px 20px;
 }
-.topbar-nav {
+.sidebar-nav {
   display: flex;
+  flex-direction: column;
   gap: 4px;
   flex: 1;
 }
-.topbar-nav a {
+.sidebar-nav a {
   display: flex;
   align-items: center;
-  gap: 6px;
-  padding: 8px 14px;
+  gap: 10px;
+  padding: 10px 12px;
   border-radius: 8px;
   text-decoration: none;
   color: var(--muted);
   font-weight: 500;
   font-size: 0.9rem;
 }
-.topbar-nav a:hover {
+.sidebar-nav a:hover {
   background: var(--gray-bg);
 }
-.topbar-nav a.active {
+.sidebar-nav a.active {
   background: var(--accent);
   color: #fff;
+}
+.sidebar-footer {
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+  margin-top: 14px;
 }
 
 /* --- buttons --- */
@@ -290,7 +308,7 @@ a {
 
 /* --- login page --- */
 .login-wrap {
-  min-height: calc(100vh - 60px);
+  min-height: calc(100vh - 88px);
   display: flex;
   align-items: center;
   justify-content: center;

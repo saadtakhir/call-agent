@@ -5,11 +5,12 @@ export async function POST(request) {
   try {
     const { username, password } = await request.json();
     if (!username || !password) return NextResponse.json({ error: "Login va parol kerak." }, { status: 400 });
-    if (!verifyCredentials(String(username), String(password))) {
+    const user = await verifyCredentials(String(username), String(password));
+    if (!user) {
       return NextResponse.json({ error: "Login yoki parol noto'g'ri." }, { status: 401 });
     }
     const res = NextResponse.json({ ok: true });
-    res.cookies.set(SESSION_COOKIE_NAME, createSessionValue(), {
+    res.cookies.set(SESSION_COOKIE_NAME, createSessionValue(user), {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",

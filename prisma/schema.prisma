@@ -37,8 +37,11 @@ model PropertyLead {
 
 model AiCallSession {
   sessionId      String   @id
-  lastResponseId String
+  lastResponseId String?
+  active         Boolean  @default(true)
   updatedAt      DateTime @updatedAt
+
+  @@index([active, updatedAt])
 }
 
 model CannedResponse {

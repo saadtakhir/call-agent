@@ -141,8 +141,29 @@ export default function AiCallWidget() {
   const recordingRecorderRef = useRef(null);
   const recordingChunksRef = useRef([]);
 
+  // Releases this call's concurrency slot. Uses sendBeacon when available
+  // since this also runs from pagehide (tab closed/navigated away) — a
+  // regular fetch there isn't guaranteed to finish before the page unloads,
+  // while a beacon is queued by the browser to fire regardless.
+  function notifyCallEnded(sessionId) {
+    if (!sessionId) return;
+    const url = `/api/ai-call/end?sessionId=${encodeURIComponent(sessionId)}`;
+    try {
+      if (navigator.sendBeacon) navigator.sendBeacon(url, new Blob());
+      else fetch(url, { method: "POST", keepalive: true }).catch(() => {});
+    } catch {
+      // Best-effort — a missed release just means this slot self-expires
+      // via the server's own staleness window instead.
+    }
+  }
+
   useEffect(() => {
-    return () => endCall();
+    const handlePageHide = () => notifyCallEnded(sessionIdRef.current);
+    window.addEventListener("pagehide", handlePageHide);
+    return () => {
+      window.removeEventListener("pagehide", handlePageHide);
+      endCall();
+    };
   }, []);
 
   /** Plays one audio blob and resolves once it actually finishes — no phase/
@@ -406,6 +427,24 @@ export default function AiCallWidget() {
     setPhase("connecting");
     if (recordingUrl) URL.revokeObjectURL(recordingUrl);
     setRecordingUrl(null);
+
+    // Checked before even asking for mic permission — no point prompting
+    // for the mic just to immediately fail once the concurrent-call limit
+    // (see MAX_CONCURRENT_CALLS) is hit.
+    const newSessionId = crypto.randomUUID();
+    try {
+      const capacityRes = await fetch(`/api/ai-call/start?sessionId=${newSessionId}`);
+      if (!capacityRes.ok) {
+        const data = await capacityRes.json().catch(() => ({}));
+        throw new Error(data.error || `Xatolik (${capacityRes.status})`);
+      }
+    } catch (err) {
+      setError(err.message);
+      setPhase("idle");
+      return;
+    }
+    sessionIdRef.current = newSessionId;
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: { echoCancellation: true, noiseSuppression: true, autoGainControl: true },
@@ -446,7 +485,6 @@ export default function AiCallWidget() {
 
       preRollRef.current = [];
       recordedChunksRef.current = [];
-      sessionIdRef.current = crypto.randomUUID();
       callActiveRef.current = true;
       armedRef.current = false; // stays unarmed until the greeting finishes playing
       isRecordingRef.current = false;
@@ -462,12 +500,14 @@ export default function AiCallWidget() {
 
       await playGreeting();
     } catch (err) {
+      notifyCallEnded(sessionIdRef.current); // capacity slot was already reserved above
       setError(`Mikrofonga ruxsat berilmadi: ${err.message}`);
       setPhase("idle");
     }
   }
 
   function endCall() {
+    notifyCallEnded(sessionIdRef.current);
     callActiveRef.current = false;
     armedRef.current = false;
     clearSilenceWatchdog();

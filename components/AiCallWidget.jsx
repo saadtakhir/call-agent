@@ -562,7 +562,7 @@ export default function AiCallWidget() {
 
       {error && <div className="error-banner">{error}</div>}
 
-      <div className="section" style={{ display: "flex", alignItems: "center", gap: 14 }}>
+      <div className="section" style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
         {!inCall ? (
           <button className="btn btn-green" onClick={startCall}>
             <Phone size={14} />

@@ -8,6 +8,11 @@ import { getSessionUser, hasPermission, PERMISSIONS, SESSION_COOKIE_NAME } from 
 // runtime.
 const PUBLIC_PAGE_PATHS = ["/login"];
 const PUBLIC_API_PATHS = ["/api/login"];
+// PWA install-ability assets — the browser/OS can probe these (manifest,
+// icons, the service worker script) before there's any session at all,
+// e.g. while sitting on /login, so they can't require auth like everything
+// else here.
+const PUBLIC_ASSET_PATHS = ["/manifest.webmanifest", "/sw.js", "/icon.png", "/apple-icon.png", "/icons"];
 
 // Which permission a path needs, keyed by prefix — checked in order, so a
 // more specific prefix (e.g. the settings-only ai-call routes) must come
@@ -27,6 +32,7 @@ const PATH_PERMISSIONS = [
 
 function isPublic(pathname) {
   if (PUBLIC_PAGE_PATHS.includes(pathname)) return true;
+  if (PUBLIC_ASSET_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`))) return true;
   return PUBLIC_API_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 

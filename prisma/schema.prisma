@@ -19,6 +19,16 @@ model User {
   createdAt    DateTime @default(now())
 }
 
+model LoginAttempt {
+  // The attempted username, lowercased/trimmed — not a foreign key, since
+  // this also has to track guesses against usernames (including the env
+  // admin's) that aren't User rows at all.
+  key         String    @id
+  failCount   Int       @default(0)
+  lockedUntil DateTime?
+  updatedAt   DateTime  @updatedAt
+}
+
 model PropertyLookupLog {
   id             Int      @id @default(autoincrement())
   search         String

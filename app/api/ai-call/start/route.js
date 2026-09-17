@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
-import { tryStartCall } from "@/lib/aiCallCapacity";
-import { config } from "@/lib/config";
+import { tryStartCall, getMaxConcurrentCalls } from "@/lib/aiCallCapacity";
 
 export const maxDuration = 10;
 
@@ -14,8 +13,9 @@ export async function GET(request) {
   try {
     const started = await tryStartCall(sessionId);
     if (!started) {
+      const max = await getMaxConcurrentCalls();
       return NextResponse.json(
-        { error: `Hozircha ${config.maxConcurrentCalls} ta suhbat band. Birozdan so'ng qayta urinib ko'ring.` },
+        { error: `Hozircha ${max} ta suhbat band. Birozdan so'ng qayta urinib ko'ring.` },
         { status: 429 }
       );
     }

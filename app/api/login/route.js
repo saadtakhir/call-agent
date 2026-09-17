@@ -21,9 +21,12 @@ export async function POST(request) {
 
     const user = await verifyCredentials(String(username), String(password));
     if (!user) {
-      const lockedUntil = await recordFailedLogin(username, ip);
+      const { lockedUntil, remaining } = await recordFailedLogin(username, ip);
       if (lockedUntil) return lockResponse(lockedUntil.getTime() - Date.now());
-      return NextResponse.json({ error: "Login yoki parol noto'g'ri." }, { status: 401 });
+      return NextResponse.json(
+        { error: `Login yoki parol noto'g'ri. Yana ${remaining} ta urinish qoldi.` },
+        { status: 401 }
+      );
     }
 
     await clearLoginAttempts(username, ip);

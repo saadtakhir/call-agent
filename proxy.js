@@ -26,6 +26,8 @@ const PATH_PERMISSIONS = [
   { prefix: "/api/ai-call/canned-responses", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/max-concurrent-calls", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/ai-qongiroq-sozlamalar", permission: PERMISSIONS.MANAGE_SETTINGS },
+  { prefix: "/api/ai-call/active-sessions", permission: PERMISSIONS.VIEW_DASHBOARD },
+  { prefix: "/faol-suhbatlar", permission: PERMISSIONS.VIEW_DASHBOARD },
   { prefix: "/api/ai-call", permission: PERMISSIONS.VIEW_CALL },
   { prefix: "/ai-qongiroq", permission: PERMISSIONS.VIEW_CALL },
 ];
@@ -47,6 +49,7 @@ function permissionForPath(pathname) {
  * the call widget just because that's everyone else's default. */
 function firstAccessiblePath(user) {
   if (hasPermission(user, PERMISSIONS.VIEW_CALL)) return "/ai-qongiroq";
+  if (hasPermission(user, PERMISSIONS.VIEW_DASHBOARD)) return "/faol-suhbatlar";
   if (hasPermission(user, PERMISSIONS.MANAGE_SETTINGS)) return "/ai-qongiroq-sozlamalar";
   if (hasPermission(user, PERMISSIONS.MANAGE_USERS)) return "/foydalanuvchilar";
   return null;

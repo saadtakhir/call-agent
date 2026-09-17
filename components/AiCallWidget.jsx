@@ -44,12 +44,18 @@ const PRE_ROLL_CHUNKS = 4; // ~350ms at a 48kHz native sample rate
 
 const PHASE_LABELS = {
   idle: "Tugallandi",
+  queued: "Navbatda kutilmoqda...",
   connecting: "Mikrofon so'ralmoqda...",
   listening: "Tinglayapman...",
   recording: "Eshityapman...",
   processing: "O'ylab ko'ryapman...",
   speaking: "Gapiryapman...",
 };
+
+// How often to re-check capacity while queued behind other active calls
+// (see /api/ai-call/start) — no server push available (Vercel's serverless
+// functions can't hold a WebSocket open), so this just polls.
+const QUEUE_POLL_MS = 4000;
 
 function rmsPercent(samples) {
   let sumSquares = 0;
@@ -112,6 +118,7 @@ export default function AiCallWidget() {
   const recordedChunksRef = useRef([]); // chunks for the utterance currently being captured
   const audioElRef = useRef(null);
   const sessionIdRef = useRef("");
+  const queueActiveRef = useRef(false); // true while the queue-retry loop in startCall is polling
 
   const armedRef = useRef(false); // false while sending/waiting/playing — ignores mic input
   const callActiveRef = useRef(false);
@@ -421,6 +428,13 @@ export default function AiCallWidget() {
     }
   }
 
+  /** Cancels an in-progress queue wait (see startCall below) — endCall()
+   * also calls this, since while queued there's no real call yet for
+   * "tugatish" to hang up, only a wait to give up on. */
+  function cancelQueue() {
+    queueActiveRef.current = false;
+  }
+
   async function startCall() {
     setError("");
     setLog([]);
@@ -430,19 +444,40 @@ export default function AiCallWidget() {
 
     // Checked before even asking for mic permission — no point prompting
     // for the mic just to immediately fail once the concurrent-call limit
-    // (see MAX_CONCURRENT_CALLS) is hit.
+    // (see MAX_CONCURRENT_CALLS) is hit. A 429 here means every slot is
+    // taken, not a hard failure, so instead of giving up this polls until
+    // one frees up (or the caller cancels) rather than erroring out on
+    // whoever happens to click 4th.
     const newSessionId = crypto.randomUUID();
-    try {
-      const capacityRes = await fetch(`/api/ai-call/start?sessionId=${newSessionId}`);
-      if (!capacityRes.ok) {
-        const data = await capacityRes.json().catch(() => ({}));
-        throw new Error(data.error || `Xatolik (${capacityRes.status})`);
+    queueActiveRef.current = true;
+    let gotSlot = false;
+    while (queueActiveRef.current) {
+      try {
+        const capacityRes = await fetch(`/api/ai-call/start?sessionId=${newSessionId}`);
+        if (capacityRes.ok) {
+          gotSlot = true;
+          break;
+        }
+        if (capacityRes.status !== 429) {
+          const data = await capacityRes.json().catch(() => ({}));
+          throw new Error(data.error || `Xatolik (${capacityRes.status})`);
+        }
+      } catch (err) {
+        setError(err.message);
+        setPhase("idle");
+        queueActiveRef.current = false;
+        return;
       }
-    } catch (err) {
-      setError(err.message);
+      setPhase("queued");
+      await new Promise((resolve) => setTimeout(resolve, QUEUE_POLL_MS));
+    }
+    if (!gotSlot) {
+      // Cancelled while queued (see cancelQueue/endCall) — nothing to clean
+      // up, since no slot was ever actually reserved.
       setPhase("idle");
       return;
     }
+    setPhase("connecting");
     sessionIdRef.current = newSessionId;
 
     try {
@@ -507,6 +542,7 @@ export default function AiCallWidget() {
   }
 
   function endCall() {
+    cancelQueue();
     notifyCallEnded(sessionIdRef.current);
     callActiveRef.current = false;
     armedRef.current = false;
@@ -571,14 +607,16 @@ export default function AiCallWidget() {
         ) : (
           <button className="btn btn-danger" onClick={endCall}>
             <PhoneOff size={14} />
-            Qo&apos;ng&apos;iroqni tugatish
+            {phase === "queued" ? "Bekor qilish" : "Qo'ng'iroqni tugatish"}
           </button>
         )}
         <span className={`status-pill ${phase === "idle" ? "status-gray" : phase === "speaking" ? "status-green" : "status-amber"}`}>
-          {(phase === "connecting" || phase === "processing") && <Loader2 size={12} className="spin" />}
+          {(phase === "connecting" || phase === "processing" || phase === "queued") && <Loader2 size={12} className="spin" />}
           {PHASE_LABELS[phase]}
         </span>
-        {inCall && <span className="muted" style={{ fontVariantNumeric: "tabular-nums" }}>{formatDuration(elapsedSec)}</span>}
+        {inCall && phase !== "queued" && (
+          <span className="muted" style={{ fontVariantNumeric: "tabular-nums" }}>{formatDuration(elapsedSec)}</span>
+        )}
       </div>
 
       {recordingUrl && (

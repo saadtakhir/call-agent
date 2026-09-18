@@ -212,7 +212,18 @@ function CannedResponseRow({ item, saving, generating, onSaveText, onGenerate, o
             {generating ? <Loader2 size={14} className="spin" /> : <Volume2 size={14} />}
           </button>
           {item.audioUrl && (
-            <a className="btn btn-outline btn-icon" href={item.audioUrl} target="_blank" rel="noreferrer" title="Tinglash">
+            // Vercel Blob overwrites this same URL in place on regenerate
+            // (lib/blobService.js) — without a cache-busting query param
+            // keyed to updatedAt, the browser (or an intermediate cache)
+            // would keep serving whatever it fetched from this exact URL
+            // before, even after the underlying file actually changed.
+            <a
+              className="btn btn-outline btn-icon"
+              href={`${item.audioUrl}?v=${encodeURIComponent(item.updatedAt)}`}
+              target="_blank"
+              rel="noreferrer"
+              title="Tinglash"
+            >
               ▶
             </a>
           )}

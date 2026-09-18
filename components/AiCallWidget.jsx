@@ -126,11 +126,16 @@ export default function AiCallWidget() {
   const speechStartRef = useRef(0);
   const lastLoudRef = useRef(0);
 
-  // Prefetched once per call (see startCall) so finishRecording can play it
-  // the INSTANT recording ends, with zero server round trip — previously
-  // the filler only came back after the server had already finished
-  // transcribing, which defeated half the point of having one at all.
-  const fillerRef = useRef(null); // { blob, text } once loaded, else null
+  // Both prefetched once per call (see startCall) so finishRecording can
+  // play the right one the INSTANT recording ends, with zero server round
+  // trip — previously the filler only came back after the server had
+  // already finished transcribing, which defeated half the point of
+  // having one at all. Which one plays depends on whether the caller was
+  // just answering a plain question or confirming one (see
+  // lastAiTextRef/finishRecording) — the confirm case is the one that
+  // actually triggers a get_property_info search.
+  const fillerRef = useRef({ question: null, confirm: null }); // { blob, text } per type once loaded
+  const lastAiTextRef = useRef(""); // the AI's most recent spoken line — checked for a trailing "to'g'rimi?"
 
   const silenceTimeoutRef = useRef(null);
   const silenceStrikeRef = useRef(0); // 0 = no "are you there?" sent yet; 1 = sent once, next timeout hangs up
@@ -176,8 +181,8 @@ export default function AiCallWidget() {
   /** Plays one audio blob and resolves once it actually finishes — no phase/
    * mic side effects, just playback (routed into the call recording graph
    * the same way every AI clip is). Used directly for a clip that ISN'T the
-   * end of the turn (the "searching_filler", played while the real answer
-   * is still being computed in parallel) — see playAudioAndResume below for
+   * end of the turn (a filler clip, played while the real answer is still
+   * being computed in parallel) — see playAudioAndResume below for
    * the version that also re-arms the mic afterward. */
   function playBlob(blob) {
     return new Promise((resolve) => {
@@ -242,6 +247,7 @@ export default function AiCallWidget() {
       if (!res.ok) throw new Error(`Xatolik (${res.status})`);
       const replyText = decodeURIComponent(res.headers.get("X-Reply-Text") || "");
       setLog((prev) => [...prev, { role: "ai", text: replyText }]);
+      lastAiTextRef.current = replyText;
       const audioBlob = await res.blob();
       // playAudioAndResume re-arms and re-runs armSilenceWatchdog, which by
       // then sees silenceStrikeRef === 1 and schedules the SILENCE_HANGUP_MS
@@ -273,22 +279,26 @@ export default function AiCallWidget() {
     }
   }
 
-  /** Loads the "searching" filler clip once at call start (fire-and-forget —
-   * called without awaiting from startCall, while the greeting plays) so
-   * it's already in memory the moment finishRecording needs it. If a turn
-   * happens to finish before this resolves, that one turn just plays no
-   * filler — a missing filler was always a tolerated fallback here, never a
-   * hard requirement. */
-  async function prefetchFiller() {
-    try {
-      const res = await fetch("/api/ai-call/filler");
-      if (!res.ok) return;
-      const text = decodeURIComponent(res.headers.get("X-Reply-Text") || "");
-      const blob = await res.blob();
-      fillerRef.current = { blob, text };
-    } catch {
-      // No filler available — finishRecording just skips it.
+  /** Loads both filler clips once at call start (fire-and-forget — called
+   * without awaiting from startCall, while the greeting plays) so whichever
+   * one finishRecording needs is already in memory by the time it's asked
+   * for. If a turn happens to finish before this resolves, or a given type
+   * failed to load, that one turn just plays no filler — a missing filler
+   * was always a tolerated fallback here, never a hard requirement. */
+  async function prefetchFillers() {
+    async function load(type) {
+      try {
+        const res = await fetch(`/api/ai-call/filler?type=${type}`);
+        if (!res.ok) return null;
+        const text = decodeURIComponent(res.headers.get("X-Reply-Text") || "");
+        const blob = await res.blob();
+        return { blob, text };
+      } catch {
+        return null;
+      }
     }
+    const [question, confirm] = await Promise.all([load("question"), load("confirm")]);
+    fillerRef.current = { question, confirm };
   }
 
   /** The call's fixed opening line (see CALL_GREETING_TEXT in
@@ -304,6 +314,7 @@ export default function AiCallWidget() {
       }
       const replyText = decodeURIComponent(res.headers.get("X-Reply-Text") || "");
       setLog((prev) => [...prev, { role: "ai", text: replyText }]);
+      lastAiTextRef.current = replyText;
       const audioBlob = await res.blob();
       await playAudioAndResume(audioBlob);
     } catch (err) {
@@ -398,10 +409,17 @@ export default function AiCallWidget() {
       });
       await new Promise((resolve) => setTimeout(resolve, FILLER_DELAY_MS));
 
-      if (!turnSettled && fillerRef.current) {
-        setLog((prev) => [...prev, { role: "ai", text: fillerRef.current.text }]);
+      // The caller is responding to whatever the AI just asked — a trailing
+      // "to'g'rimi?" means they're confirming, which is what actually
+      // triggers a get_property_info search (see the system prompt's
+      // section 4), so that's the moment worth a "qidiryapman" filler
+      // instead of the plain generic one.
+      const fillerType = lastAiTextRef.current.trim().endsWith("to'g'rimi?") ? "confirm" : "question";
+      const filler = fillerRef.current[fillerType];
+      if (!turnSettled && filler) {
+        setLog((prev) => [...prev, { role: "ai", text: filler.text }]);
         setPhase("speaking");
-        await playBlob(fillerRef.current.blob);
+        await playBlob(filler.blob);
       }
       setPhase("processing");
 
@@ -414,6 +432,7 @@ export default function AiCallWidget() {
       const transcript = decodeURIComponent(res.headers.get("X-Transcript") || "");
       const replyText = decodeURIComponent(res.headers.get("X-Reply-Text") || "");
       setLog((prev) => [...prev, { role: "user", text: transcript }, { role: "ai", text: replyText }]);
+      lastAiTextRef.current = replyText;
       const audioBlob = await res.blob();
       await playAudioAndResume(audioBlob);
     } catch (err) {
@@ -524,8 +543,9 @@ export default function AiCallWidget() {
       armedRef.current = false; // stays unarmed until the greeting finishes playing
       isRecordingRef.current = false;
       silenceStrikeRef.current = 0;
-      fillerRef.current = null;
-      prefetchFiller(); // fire-and-forget, loads alongside the greeting below
+      fillerRef.current = { question: null, confirm: null };
+      lastAiTextRef.current = "";
+      prefetchFillers(); // fire-and-forget, loads alongside the greeting below
 
       callStartRef.current = Date.now();
       setElapsedSec(0);

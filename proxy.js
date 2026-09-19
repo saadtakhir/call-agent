@@ -20,6 +20,7 @@ const PUBLIC_ASSET_PATHS = ["/manifest.webmanifest", "/sw.js", "/icon.png", "/ap
 // "/api/ai-call" catch-all used by the call widget itself).
 const PATH_PERMISSIONS = [
   { prefix: "/api/users", permission: PERMISSIONS.MANAGE_USERS },
+  { prefix: "/api/login-attempts", permission: PERMISSIONS.MANAGE_USERS },
   { prefix: "/foydalanuvchilar", permission: PERMISSIONS.MANAGE_USERS },
   { prefix: "/api/ai-call/stt-provider", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/system-prompt", permission: PERMISSIONS.MANAGE_SETTINGS },

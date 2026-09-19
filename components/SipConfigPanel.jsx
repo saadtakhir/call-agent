@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 import { SIP_PROXY_OPTIONS } from "@/lib/sipProxyOptions";
+import SipStatusBadges from "./SipStatusBadges";
 
 /** PBX (FreePBX/Asterisk) SIP credentials the sip-bridge/ VPS service
  * registers with — live-editable here instead of a static .env, the same
@@ -76,6 +77,8 @@ export default function SipConfigPanel() {
         <h2 style={{ margin: 0 }}>SIP sozlamalari</h2>
       </div>
       <p className="muted" style={{ marginBottom: 18 }}>PBX tizimingiz uchun ulanish sozlamalari</p>
+
+      <SipStatusBadges />
 
       {error && <div className="error-banner">{error}</div>}
 

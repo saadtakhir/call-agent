@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { AuthClient } from "./authClient.js";
 import { startAudioSocketServer } from "./audiosocketServer.js";
+import { startHeartbeat } from "./heartbeat.js";
 
 const { APP_BASE_URL, SIP_BRIDGE_USERNAME, SIP_BRIDGE_PASSWORD, AUDIOSOCKET_PORT } = process.env;
 
@@ -25,7 +26,9 @@ try {
   process.exit(1);
 }
 
-startAudioSocketServer({
+const { getActiveCallCount } = startAudioSocketServer({
   port: Number(AUDIOSOCKET_PORT) || 8090,
   authClient,
 });
+
+startHeartbeat({ authClient, getActiveCallCount });

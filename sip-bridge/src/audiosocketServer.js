@@ -7,8 +7,14 @@ import { CallSession } from "./callSession.js";
  * incoming TCP chunks are buffered and re-sliced into whole frames here
  * before being handed to a CallSession one at a time. */
 export function startAudioSocketServer({ port, authClient }) {
+  // Tracked so the heartbeat (see heartbeat.js) can report how many calls
+  // are currently live — the app has no other way to know this, since it
+  // can't reach into the VPS itself.
+  const activeSessions = new Set();
+
   const server = net.createServer((socket) => {
     const session = new CallSession({ socket, authClient });
+    activeSessions.add(session);
     let buffer = Buffer.alloc(0);
 
     socket.on("data", (chunk) => {
@@ -23,7 +29,10 @@ export function startAudioSocketServer({ port, authClient }) {
       }
     });
 
-    socket.on("close", () => session.handleSocketClosed());
+    socket.on("close", () => {
+      session.handleSocketClosed();
+      activeSessions.delete(session);
+    });
     socket.on("error", (err) => session.handleSocketError(err));
   });
 
@@ -35,5 +44,5 @@ export function startAudioSocketServer({ port, authClient }) {
     console.log(`[sip-bridge] AudioSocket server listening on port ${port}`);
   });
 
-  return server;
+  return { server, getActiveCallCount: () => activeSessions.size };
 }

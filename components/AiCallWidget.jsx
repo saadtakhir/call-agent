@@ -16,11 +16,11 @@ const MIN_SPEECH_MS = 400; // shorter than this is treated as noise, not speech,
 // A voice call has no visual "your turn" cue the way a chat UI does, so if
 // the caller just never says anything (not a mid-utterance pause — SILENCE_MS
 // above handles that — but total silence while "listening"), the widget
-// needs to say SOMETHING rather than sit there indefinitely. Two-stage: a
-// short "are you there?" prompt first, then a hangup if that ALSO goes
-// unanswered, so the call never stays open forever.
-const SILENCE_CHECK_MS = 5000;
-const SILENCE_HANGUP_MS = 10000;
+// needs to say SOMETHING rather than sit there indefinitely. Four stages,
+// evenly spaced: at 5s "Siz shu yerdamisiz?", at 10s "Eshitib turibsizmi?",
+// at 15s a warning that the call is about to end, at 20s it actually hangs
+// up — see SILENCE_STAGE_TEXT_KEYS/handleSilenceTimeout below.
+const SILENCE_STAGE_MS = 5000;
 
 // How long to wait for the real answer before playing the "searching"
 // filler at all — a fast reply (a quick acknowledgment, no tool call
@@ -138,7 +138,7 @@ export default function AiCallWidget() {
   const lastAiTextRef = useRef(""); // the AI's most recent spoken line — checked for a trailing "to'g'rimi?"
 
   const silenceTimeoutRef = useRef(null);
-  const silenceStrikeRef = useRef(0); // 0 = no "are you there?" sent yet; 1 = sent once, next timeout hangs up
+  const silenceStrikeRef = useRef(0); // 0-2 = which silence prompt fires next; 3+ = next timeout hangs up
 
   const timerIntervalRef = useRef(null);
   const callStartRef = useRef(0);
@@ -220,38 +220,39 @@ export default function AiCallWidget() {
   }
 
   /** (Re)starts the "caller went quiet" timer from whatever moment we return
-   * to idle-listening — 5s for the first check, then (once that's already
-   * been sent) 10s more before giving up and hanging up. Cleared the moment
+   * to idle-listening — always SILENCE_STAGE_MS, regardless of stage, since
+   * every stage is evenly spaced (5s/10s/15s/20s from the start of the
+   * silence, i.e. 5s from whichever stage just fired). Cleared the moment
    * real speech is detected (see handleAudioProcess). */
   function armSilenceWatchdog() {
     clearSilenceWatchdog();
     if (!callActiveRef.current) return;
-    const delay = silenceStrikeRef.current === 0 ? SILENCE_CHECK_MS : SILENCE_HANGUP_MS;
-    silenceTimeoutRef.current = setTimeout(handleSilenceTimeout, delay);
+    silenceTimeoutRef.current = setTimeout(handleSilenceTimeout, SILENCE_STAGE_MS);
   }
 
-  /** Fires when the caller has been silent for SILENCE_CHECK_MS (first time)
-   * or SILENCE_HANGUP_MS (after the "are you there?" prompt already played
-   * once with still no response) — plays a proactive check-in, or ends the
-   * call outright the second time. */
+  /** Fires every SILENCE_STAGE_MS the caller stays silent — plays the next
+   * escalating check-in (stage 0/1/2, see /api/ai-call/silence-check's own
+   * ?stage= handling), or ends the call outright once all three have
+   * already played with still no response. */
   async function handleSilenceTimeout() {
     if (!callActiveRef.current || !armedRef.current) return;
-    if (silenceStrikeRef.current >= 1) {
+    if (silenceStrikeRef.current >= 3) {
       endCall();
       return;
     }
-    silenceStrikeRef.current = 1;
+    const stage = silenceStrikeRef.current;
+    silenceStrikeRef.current += 1;
     armedRef.current = false;
     try {
-      const res = await fetch("/api/ai-call/silence-check");
+      const res = await fetch(`/api/ai-call/silence-check?stage=${stage}`);
       if (!res.ok) throw new Error(`Xatolik (${res.status})`);
       const replyText = decodeURIComponent(res.headers.get("X-Reply-Text") || "");
       setLog((prev) => [...prev, { role: "ai", text: replyText }]);
       lastAiTextRef.current = replyText;
       const audioBlob = await res.blob();
-      // playAudioAndResume re-arms and re-runs armSilenceWatchdog, which by
-      // then sees silenceStrikeRef === 1 and schedules the SILENCE_HANGUP_MS
-      // timer instead of another check.
+      // playAudioAndResume re-arms and re-runs armSilenceWatchdog, which
+      // schedules the next stage (or the hangup check) another
+      // SILENCE_STAGE_MS out.
       await playAudioAndResume(audioBlob);
     } catch {
       if (callActiveRef.current) {

@@ -95,6 +95,18 @@ asterisk -rx "pjsip show registrations"   # should show the extension as Registe
 
 ## 4. Run the bridge
 
+The bridge reads Asterisk's own registration status (via the local
+`asterisk -rx` CLI — see `src/asteriskStatus.js`) to show it on the app's
+SIP sozlamalari panel, which needs `deploy` in the `asterisk` group
+(Asterisk's control socket isn't world-readable by default):
+
+```sh
+sudo usermod -aG asterisk deploy
+```
+
+(Takes effect on this user's next login/process start — restart the
+service after this if it's already running.)
+
 ```sh
 npm start
 ```

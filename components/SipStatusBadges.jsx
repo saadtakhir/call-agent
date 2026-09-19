@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Wifi, WifiOff, PhoneCall, Clock } from "lucide-react";
+import { Wifi, WifiOff, PhoneCall, Clock, ShieldCheck, ShieldAlert } from "lucide-react";
 
 const POLL_MS = 5000;
 
@@ -16,10 +16,11 @@ function timeAgo(iso) {
 }
 
 /** Live status of sip-bridge/ — the Vercel app can't reach INTO the VPS
- * (no persistent connection), so this only ever reflects whether the
- * bridge process last PUSHED a heartbeat recently (see
- * /api/ai-call/sip-heartbeat and lib/sipStatus.js), not Asterisk's own SIP
- * registration state with FreePBX. */
+ * (no persistent connection), so this only ever reflects whatever the
+ * bridge last PUSHED in its heartbeat (see /api/ai-call/sip-heartbeat and
+ * lib/sipStatus.js), including Asterisk's own PJSIP registration state
+ * with the PBX (read via the local `asterisk` CLI — see
+ * sip-bridge/src/asteriskStatus.js). */
 export default function SipStatusBadges() {
   const [status, setStatus] = useState(null);
   const [, forceTick] = useState(0);
@@ -68,6 +69,12 @@ export default function SipStatusBadges() {
         <Clock size={13} />
         Oxirgi aloqa: {timeAgo(status.lastHeartbeatAt)}
       </span>
+      {status.online && (
+        <span className={`status-pill ${status.pbxRegistered ? "status-green" : "status-amber"}`}>
+          {status.pbxRegistered ? <ShieldCheck size={13} /> : <ShieldAlert size={13} />}
+          PBX: {status.pbxStatusDetail || (status.pbxRegistered ? "Registered" : "Noma'lum")}
+        </span>
+      )}
     </div>
   );
 }

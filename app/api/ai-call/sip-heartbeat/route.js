@@ -7,8 +7,12 @@ import { recordHeartbeat } from "@/lib/sipStatus";
 // meant to only ever need view_call.
 export async function POST(request) {
   try {
-    const { activeCalls } = await request.json();
-    await recordHeartbeat({ activeCalls: Number(activeCalls) || 0 });
+    const { activeCalls, pbxRegistered, pbxStatusDetail } = await request.json();
+    await recordHeartbeat({
+      activeCalls: Number(activeCalls) || 0,
+      pbxRegistered: Boolean(pbxRegistered),
+      pbxStatusDetail: pbxStatusDetail ? String(pbxStatusDetail) : "",
+    });
     return NextResponse.json({ ok: true });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 400 });

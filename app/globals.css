@@ -380,6 +380,90 @@ a {
   color: var(--muted);
 }
 
+/* --- settings vertical tabs --- */
+.settings-tabs {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: flex-start;
+}
+.settings-tabs-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 8px;
+}
+.settings-tab {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  width: 100%;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+}
+.settings-tab:hover:not(.active) {
+  background: var(--gray-bg);
+}
+.settings-tab-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  background: var(--gray-bg);
+  color: var(--muted);
+}
+.settings-tab-title {
+  display: block;
+  font-weight: 600;
+  font-size: 0.88rem;
+  color: var(--text);
+}
+.settings-tab-subtitle {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.settings-tab.active {
+  background: var(--accent);
+}
+.settings-tab.active .settings-tab-icon {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+}
+.settings-tab.active .settings-tab-title,
+.settings-tab.active .settings-tab-subtitle {
+  color: #fff;
+}
+.settings-tabs-content {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .settings-tabs {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+  .settings-tabs-nav {
+    width: 240px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 20px;
+  }
+}
+
 /* --- confirm dialog --- */
 .confirm-overlay {
   position: fixed;

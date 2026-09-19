@@ -1,10 +1,11 @@
-import { Mic, Gauge, Phone, Bot, MessageSquareText } from "lucide-react";
+import { Mic, Gauge, Phone, Bot, MessageSquareText, Wallet } from "lucide-react";
 import SettingsTabs from "@/components/SettingsTabs";
 import SttProviderPanel from "@/components/SttProviderPanel";
 import SystemPromptPanel from "@/components/SystemPromptPanel";
 import CannedResponsesPanel from "@/components/CannedResponsesPanel";
 import MaxConcurrentCallsPanel from "@/components/MaxConcurrentCallsPanel";
 import SipConfigPanel from "@/components/SipConfigPanel";
+import ProviderUsagePanel from "@/components/ProviderUsagePanel";
 
 export const metadata = { title: "AI qo'ng'iroq sozlamalari | E-Content" };
 
@@ -43,6 +44,13 @@ const TABS = [
     subtitle: "Ovozli shablonlar",
     icon: <MessageSquareText size={18} />,
     content: <CannedResponsesPanel />,
+  },
+  {
+    id: "usage",
+    title: "Xarajatlar",
+    subtitle: "Provayder balanslari",
+    icon: <Wallet size={18} />,
+    content: <ProviderUsagePanel />,
   },
 ];
 

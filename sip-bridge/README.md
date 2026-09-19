@@ -19,18 +19,30 @@ SIP/RTP connection a phone extension requires).
 
 ## Requirements on the VPS
 
-- Ubuntu 22.04 (or similar), 1 vCPU / 2GB RAM is enough for a handful of
-  concurrent calls.
+- Ubuntu 22.04 (or similar), 1 vCPU / 2GB RAM is comfortable for a handful
+  of concurrent calls. A 512MB droplet can work for light/test traffic
+  (Asterisk + Node + ffmpeg together are lean, but leave little headroom) —
+  add a 1GB swap file if you see OOM kills in `dmesg`:
+  `fallocate -l 1G /swapfile && chmod 600 /swapfile && mkswap /swapfile && swapon /swapfile`
+  (add it to `/etc/fstab` to survive reboots).
 - Node.js 18+ (for built-in `fetch`/`FormData`/`Blob`).
 - `ffmpeg` (`apt install ffmpeg`) — used to transcode ElevenLabs' MP3
   responses into the raw PCM AudioSocket needs.
 - Asterisk with `chan_pjsip` and `app_audiosocket` (Ubuntu 22.04's `asterisk`
   apt package includes both).
+- `git` and Node's `npm`.
 
-## 1. Install
+## 1. One-time setup
+
+A dedicated non-root user owns both the checkout and the running service —
+this is also the user the auto-deploy workflow (see below) SSHes in as:
 
 ```sh
-git clone <this repo> && cd ai-call-agent/sip-bridge
+adduser --disabled-password --gecos "" deploy
+mkdir -p /opt/ai-call-agent && chown deploy:deploy /opt/ai-call-agent
+su - deploy
+git clone https://github.com/<you>/call-agent.git /opt/ai-call-agent
+cd /opt/ai-call-agent/sip-bridge
 npm install
 cp .env.example .env   # fill in APP_BASE_URL, SIP_BRIDGE_USERNAME/PASSWORD
 ```
@@ -102,7 +114,7 @@ EnvironmentFile=/opt/ai-call-agent/sip-bridge/.env
 ExecStart=/usr/bin/node src/index.js
 Restart=always
 RestartSec=3
-User=sip-bridge
+User=deploy
 
 [Install]
 WantedBy=multi-user.target
@@ -113,6 +125,33 @@ sudo systemctl daemon-reload
 sudo systemctl enable --now sip-bridge
 sudo journalctl -u sip-bridge -f
 ```
+
+## 5. Auto-deploy from GitHub
+
+The Next.js app redeploys on Vercel automatically on every push (Vercel's
+own GitHub integration, unrelated to this). sip-bridge lives on this VPS
+instead, which Vercel can't reach — `.github/workflows/deploy-sip-bridge.yml`
+is the equivalent for it: on every push to `main` touching `sip-bridge/**`,
+it SSHes into this VPS and runs `sip-bridge/deploy.sh` (`git reset --hard
+origin/main` + `npm install` + restart the service).
+
+One-time setup:
+
+1. Generate a dedicated deploy keypair **on your own machine** (not the
+   VPS): `ssh-keygen -t ed25519 -f sip_bridge_deploy_key -N ""`.
+2. Append `sip_bridge_deploy_key.pub` to `/home/deploy/.ssh/authorized_keys`
+   on the VPS.
+3. Let `deploy` restart the service without a password, but ONLY that one
+   command — `sudo visudo -f /etc/sudoers.d/sip-bridge-deploy` and add:
+   `deploy ALL=(ALL) NOPASSWD: /bin/systemctl restart sip-bridge`
+4. In the GitHub repo → Settings → Secrets and variables → Actions, add:
+   - `SIP_BRIDGE_HOST` — the VPS's IP (e.g. `67.207.94.199`)
+   - `SIP_BRIDGE_USER` — `deploy`
+   - `SIP_BRIDGE_SSH_KEY` — the contents of the PRIVATE key
+     (`sip_bridge_deploy_key`, not the `.pub` one)
+
+From then on, pushing a `sip-bridge/` change to `main` redeploys it within
+about a minute — check progress under the repo's **Actions** tab.
 
 ## Verification
 

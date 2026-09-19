@@ -1,0 +1,23 @@
+name: Deploy sip-bridge
+
+# The Next.js app auto-deploys via Vercel's own GitHub integration
+# (unrelated to this file). sip-bridge/ lives on a separate VPS Vercel
+# can't reach, so this is its equivalent: on every push to main that
+# touches sip-bridge/, SSH into the VPS and run its deploy script.
+on:
+  push:
+    branches: [main]
+    paths:
+      - "sip-bridge/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: SSH and deploy
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SIP_BRIDGE_HOST }}
+          username: ${{ secrets.SIP_BRIDGE_USER }}
+          key: ${{ secrets.SIP_BRIDGE_SSH_KEY }}
+          script: bash /opt/ai-call-agent/sip-bridge/deploy.sh

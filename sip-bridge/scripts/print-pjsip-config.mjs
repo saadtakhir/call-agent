@@ -29,8 +29,16 @@ if (!extension || !password) {
   console.error("SIP sozlamalari to'liq emas — avval /ai-qongiroq-sozlamalar sahifasida to'ldiring.");
   process.exit(1);
 }
+if (!domain) {
+  // There's no sane default here — falling back to APP_BASE_URL's own
+  // hostname (the Next.js app's domain, e.g. call.saad.uz) would silently
+  // register against the WRONG server, since this needs to be the PBX's
+  // own domain (e.g. call.e-baholash.uz), not the app's.
+  console.error("\"SIP domeni\" bo'sh — SIP sozlamalari panelida PBX serveringizning domenini (masalan call.e-baholash.uz) kiriting.");
+  process.exit(1);
+}
 
-const server = domain || new URL(APP_BASE_URL).hostname;
+const server = domain;
 
 console.log(`
 ; --- Generated from ${APP_BASE_URL}'s SIP sozlamalari panel (proxy: ${proxy}) ---

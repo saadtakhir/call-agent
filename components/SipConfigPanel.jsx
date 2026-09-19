@@ -120,15 +120,17 @@ export default function SipConfigPanel() {
           </div>
 
           <div style={{ display: "flex", flexDirection: "column", gap: 6, marginBottom: 20 }}>
-            <label style={{ fontSize: "0.85rem" }}>SIP domeni (ixtiyoriy)</label>
+            <label style={{ fontSize: "0.85rem" }}>SIP domeni *</label>
             <input
               className="manage-input"
               style={{ maxWidth: 320 }}
+              placeholder="masalan: call.e-baholash.uz"
               value={domain}
               onChange={(e) => setDomain(e.target.value)}
             />
             <p className="muted" style={{ margin: 0, fontSize: "0.8rem" }}>
-              Tizim standartidan foydalanish uchun bo&apos;sh qoldiring
+              PBX (FreePBX/Asterisk) serveringizning manzili — bu yerga kiritilmasa, sip-bridge qaysi serverga
+              ro&apos;yxatdan o&apos;tishni bilolmaydi
             </p>
           </div>
 

@@ -1,0 +1,13 @@
+{
+  "name": "sip-bridge",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Bridges a FreePBX SIP extension (via a local Asterisk AudioSocket) to the existing ai-call-agent Next.js app's /api/ai-call/* endpoints — the same ones components/AiCallWidget.jsx already calls from the browser.",
+  "scripts": {
+    "start": "node src/index.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}

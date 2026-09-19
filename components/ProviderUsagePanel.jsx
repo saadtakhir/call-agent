@@ -2,9 +2,15 @@
 
 import { useEffect, useState } from "react";
 
+// Avoids toLocaleDateString(...) here — Vercel's Node runtime ships without
+// full ICU locale data by default, so "uz-UZ" silently falls back to a
+// garbled format (e.g. "M10 10") instead of throwing.
 function formatDate(iso) {
   if (!iso) return "noma'lum";
-  return new Date(iso).toLocaleDateString("uz-UZ", { day: "numeric", month: "long" });
+  const d = new Date(iso);
+  const day = String(d.getDate()).padStart(2, "0");
+  const month = String(d.getMonth() + 1).padStart(2, "0");
+  return `${day}.${month}.${d.getFullYear()}`;
 }
 
 /** Account-wide usage/quota pulled straight from each provider's own API —

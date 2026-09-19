@@ -60,6 +60,15 @@ model AiCallSession {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  // Per-call usage, accumulated turn by turn (see lib/callUsage.js) — the
+  // basis for the real, per-minute cost averages shown on the Xarajatlar
+  // panel, as opposed to ProviderUsagePanel's account-wide provider totals.
+  sttSeconds      Float @default(0)
+  llmInputTokens  Int   @default(0)
+  llmCachedTokens Int   @default(0)
+  llmOutputTokens Int   @default(0)
+  ttsCharacters   Int   @default(0)
+
   @@index([active, updatedAt])
 }
 

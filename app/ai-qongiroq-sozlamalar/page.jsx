@@ -6,6 +6,7 @@ import CannedResponsesPanel from "@/components/CannedResponsesPanel";
 import MaxConcurrentCallsPanel from "@/components/MaxConcurrentCallsPanel";
 import SipConfigPanel from "@/components/SipConfigPanel";
 import ProviderUsagePanel from "@/components/ProviderUsagePanel";
+import CallUsagePanel from "@/components/CallUsagePanel";
 
 export const metadata = { title: "AI qo'ng'iroq sozlamalari | E-Content" };
 
@@ -48,9 +49,14 @@ const TABS = [
   {
     id: "usage",
     title: "Xarajatlar",
-    subtitle: "Provayder balanslari",
+    subtitle: "Balans va sarf",
     icon: <Wallet size={18} />,
-    content: <ProviderUsagePanel />,
+    content: (
+      <>
+        <ProviderUsagePanel />
+        <CallUsagePanel />
+      </>
+    ),
   },
 ];
 

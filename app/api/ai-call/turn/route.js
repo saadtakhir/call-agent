@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { transcribeAudio, streamElevenLabsSpeech, toSpokenForm } from "@/lib/aiCallService";
 import { runAgentTurn } from "@/lib/aiCallAgent";
 import { findCannedAudioUrl } from "@/lib/cannedResponses";
+import { wavDurationSeconds, recordCallUsage } from "@/lib/callUsage";
 
 export const maxDuration = 60;
 
@@ -36,15 +37,34 @@ export async function POST(request) {
       return NextResponse.json({ error: "Ovoz tushunilmadi, qayta urinib ko'ring." }, { status: 422 });
     }
 
-    const { reply, audioUrl } = await runAgentTurn({ sessionId, transcript });
+    const { reply, audioUrl, usage } = await runAgentTurn({ sessionId, transcript });
 
     const cachedBuffer = audioUrl ? await fetchAudioBuffer(audioUrl) : null;
     let audioBody = cachedBuffer;
+    let ttsCharacters = 0;
     if (!audioBody) {
       const cannedUrl = await findCannedAudioUrl(reply);
       const cannedBuffer = cannedUrl ? await fetchAudioBuffer(cannedUrl) : null;
-      audioBody = cannedBuffer || (await streamElevenLabsSpeech(toSpokenForm(reply))).body;
+      if (cannedBuffer) {
+        audioBody = cannedBuffer;
+      } else {
+        // Only text that actually goes through a live ElevenLabs synthesis
+        // counts toward cost — cached/canned audio above is free to replay.
+        const spoken = toSpokenForm(reply);
+        ttsCharacters = spoken.length;
+        audioBody = (await streamElevenLabsSpeech(spoken)).body;
+      }
     }
+
+    // Awaited (not fire-and-forget) since a serverless function can be
+    // frozen/torn down right after the response below is sent.
+    await recordCallUsage(sessionId, {
+      sttSeconds: wavDurationSeconds(buffer),
+      llmInputTokens: usage.inputTokens,
+      llmCachedTokens: usage.cachedTokens,
+      llmOutputTokens: usage.outputTokens,
+      ttsCharacters,
+    });
 
     return new Response(audioBody, {
       headers: {

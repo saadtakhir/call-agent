@@ -29,6 +29,7 @@ const PATH_PERMISSIONS = [
   { prefix: "/api/ai-call/sip-config", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/sip-status", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/provider-usage", permission: PERMISSIONS.MANAGE_SETTINGS },
+  { prefix: "/api/ai-call/call-usage", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/ai-qongiroq-sozlamalar", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/active-sessions", permission: PERMISSIONS.VIEW_DASHBOARD },
   { prefix: "/faol-suhbatlar", permission: PERMISSIONS.VIEW_DASHBOARD },

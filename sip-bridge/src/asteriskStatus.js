@@ -19,6 +19,16 @@ export async function getPbxRegistrationStatus() {
   }
 }
 
+/** Re-parses pjsip.conf and re-initializes every PJSIP object from
+ * scratch, including outbound registrations — the only reliable way found
+ * to resume one after Asterisk gives up on it ("Maximum retries reached
+ * ... stopping registration attempt"), since a stopped registration does
+ * NOT resume on its own even once the PBX becomes reachable again.
+ * Triggered by the "Qayta ulanish" button (see heartbeat.js). */
+export async function reloadPjsip() {
+  await execFileAsync("asterisk", ["-rx", "pjsip reload"]);
+}
+
 export function parseRegistrationOutput(output) {
   const dataLine = output
     .split("\n")

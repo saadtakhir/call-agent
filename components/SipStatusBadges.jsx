@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Wifi, WifiOff, PhoneCall, Clock, ShieldCheck, ShieldAlert } from "lucide-react";
+import { Wifi, WifiOff, PhoneCall, Clock, ShieldCheck, ShieldAlert, RefreshCw } from "lucide-react";
 
 const POLL_MS = 5000;
 
@@ -24,6 +24,21 @@ function timeAgo(iso) {
 export default function SipStatusBadges() {
   const [status, setStatus] = useState(null);
   const [, forceTick] = useState(0);
+  const [reconnecting, setReconnecting] = useState(false);
+
+  async function reconnect() {
+    setReconnecting(true);
+    try {
+      await fetch("/api/ai-call/sip-reconnect", { method: "POST" });
+      // The bridge only picks this up on its NEXT heartbeat (up to ~30s),
+      // then reloading pjsip itself takes a moment — this just gives the
+      // button a brief, clearly-finite "working" state rather than
+      // pretending to know the moment it actually took effect.
+      setTimeout(() => setReconnecting(false), 5000);
+    } catch {
+      setReconnecting(false);
+    }
+  }
 
   useEffect(() => {
     let cancelled = false;
@@ -74,6 +89,12 @@ export default function SipStatusBadges() {
           {status.pbxRegistered ? <ShieldCheck size={13} /> : <ShieldAlert size={13} />}
           PBX: {status.pbxStatusDetail || (status.pbxRegistered ? "Registered" : "Noma'lum")}
         </span>
+      )}
+      {status.online && !status.pbxRegistered && (
+        <button className="btn btn-outline" style={{ padding: "5px 12px", fontSize: "0.8rem" }} onClick={reconnect} disabled={reconnecting}>
+          <RefreshCw size={13} className={reconnecting ? "spin" : ""} />
+          {reconnecting ? "So'rov yuborildi..." : "Qayta ulanish"}
+        </button>
       )}
     </div>
   );

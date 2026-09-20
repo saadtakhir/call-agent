@@ -72,6 +72,17 @@ model AiCallSession {
   @@index([active, updatedAt])
 }
 
+/** Generic fixed-window IP rate limiter (see lib/rateLimit.js) — currently
+ * only guards /api/ai-call/start against a valid-but-malicious/compromised
+ * account rapidly cycling start→end to churn through many calls despite
+ * the concurrency cap, which only bounds calls active AT ONCE, not total
+ * throughput over time. */
+model RateLimitBucket {
+  key         String   @id
+  count       Int      @default(0)
+  windowStart DateTime @default(now())
+}
+
 model CannedResponse {
   id        Int      @id @default(autoincrement())
   key       String   @unique

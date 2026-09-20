@@ -1,3 +1,4 @@
+import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSessionUser, hasPermission, PERMISSIONS, SESSION_COOKIE_NAME } from "./lib/auth.js";
 
@@ -61,36 +62,75 @@ function firstAccessiblePath(user) {
   return null;
 }
 
+/** A fresh nonce per request, allowing script-src to stay locked to
+ * 'self' + this nonce rather than a blanket 'unsafe-inline' — Next's own
+ * RSC hydration scripts self-attach it (see the request-header forwarding
+ * below), but a <script> tag smuggled in via a stored-XSS payload has no
+ * way to know it and still gets blocked. style-src keeps 'unsafe-inline'
+ * since components throughout this app render inline style={{...}}. */
+function buildCsp(nonce) {
+  return [
+    "default-src 'self'",
+    `script-src 'self' 'nonce-${nonce}'`,
+    "style-src 'self' 'unsafe-inline'",
+    "img-src 'self' data: blob:",
+    "media-src 'self' blob:",
+    "connect-src 'self'",
+    "font-src 'self'",
+    "frame-ancestors 'none'",
+    "base-uri 'self'",
+    "form-action 'self'",
+  ].join("; ");
+}
+
+/** Every return path below needs the CSP attached, not just the final
+ * "happy path" — a helper instead of repeating this at each return. */
+function withCsp(response, nonce, csp) {
+  response.headers.set("Content-Security-Policy", csp);
+  response.headers.set("x-nonce", nonce);
+  return response;
+}
+
 export function proxy(request) {
+  const nonce = crypto.randomUUID().replace(/-/g, "");
+  const csp = buildCsp(nonce);
+  // Forwarded to the request Next.js's own rendering sees for THIS same
+  // request, so its server-generated inline scripts can read the nonce
+  // via headers() and self-attach it — see buildCsp's doc comment.
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-nonce", nonce);
+  requestHeaders.set("Content-Security-Policy", csp);
+  const passThrough = () => NextResponse.next({ request: { headers: requestHeaders } });
+
   const { pathname } = request.nextUrl;
-  if (isPublic(pathname)) return NextResponse.next();
+  if (isPublic(pathname)) return withCsp(passThrough(), nonce, csp);
 
   const session = request.cookies.get(SESSION_COOKIE_NAME)?.value;
   const user = getSessionUser(session);
   const isApi = pathname.startsWith("/api/");
 
   if (!user) {
-    if (isApi) return NextResponse.json({ error: "Tizimga kirilmagan." }, { status: 401 });
+    if (isApi) return withCsp(NextResponse.json({ error: "Tizimga kirilmagan." }, { status: 401 }), nonce, csp);
     const url = request.nextUrl.clone();
     url.pathname = "/login";
-    return NextResponse.redirect(url);
+    return withCsp(NextResponse.redirect(url), nonce, csp);
   }
 
   if (pathname === "/") {
     const url = request.nextUrl.clone();
     url.pathname = firstAccessiblePath(user) || "/login";
-    return NextResponse.redirect(url);
+    return withCsp(NextResponse.redirect(url), nonce, csp);
   }
 
   const requiredPermission = permissionForPath(pathname);
   if (requiredPermission && !hasPermission(user, requiredPermission)) {
-    if (isApi) return NextResponse.json({ error: "Bu amal uchun ruxsatingiz yo'q." }, { status: 403 });
+    if (isApi) return withCsp(NextResponse.json({ error: "Bu amal uchun ruxsatingiz yo'q." }, { status: 403 }), nonce, csp);
     const url = request.nextUrl.clone();
     url.pathname = firstAccessiblePath(user) || "/login";
-    return NextResponse.redirect(url);
+    return withCsp(NextResponse.redirect(url), nonce, csp);
   }
 
-  return NextResponse.next();
+  return withCsp(passThrough(), nonce, csp);
 }
 
 export const config = {

@@ -3,6 +3,7 @@ import { transcribeAudio, streamElevenLabsSpeech, toSpokenForm } from "@/lib/aiC
 import { runAgentTurn } from "@/lib/aiCallAgent";
 import { findCannedAudioUrl } from "@/lib/cannedResponses";
 import { wavDurationSeconds, recordCallUsage } from "@/lib/callUsage";
+import { isSessionActive } from "@/lib/aiCallCapacity";
 
 export const maxDuration = 60;
 
@@ -29,6 +30,12 @@ export async function POST(request) {
     const sessionId = String(form.get("sessionId") || "");
     if (!audio || !sessionId) {
       return NextResponse.json({ error: "\"audio\" va \"sessionId\" kerak." }, { status: 400 });
+    }
+    // Blocks a caller from skipping straight to this (billable) endpoint
+    // with a made-up sessionId that never actually reserved a slot via
+    // /api/ai-call/start — see isSessionActive's doc comment.
+    if (!(await isSessionActive(sessionId))) {
+      return NextResponse.json({ error: "Suhbat sessiyasi topilmadi yoki tugagan." }, { status: 403 });
     }
 
     const buffer = Buffer.from(await audio.arrayBuffer());

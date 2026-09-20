@@ -50,6 +50,25 @@ function permissionForPath(pathname) {
   return match?.permission || null;
 }
 
+/** Rejects a browser request whose Origin doesn't match this same host —
+ * blocks a malicious site from using a signed-in admin's browser (and
+ * cookies) to call these APIs on their behalf (CSRF), on top of the
+ * cookie's own SameSite=Lax. Absent Origin is allowed through rather than
+ * rejected: browsers only ever send it on same-origin non-GET requests
+ * (never plain GETs) and cross-origin ones (which then get caught by the
+ * mismatch below); a non-browser caller like sip-bridge's own server-side
+ * fetch() never sends it at all, and has no cookies/browser to exploit
+ * for CSRF in the first place. */
+function isAllowedOrigin(request) {
+  const origin = request.headers.get("origin");
+  if (!origin) return true;
+  try {
+    return new URL(origin).host === request.nextUrl.host;
+  } catch {
+    return false;
+  }
+}
+
 /** Where to send a signed-in user who just hit "/" or a page they don't
  * have permission for — the first section their own permissions actually
  * unlock, so e.g. a user with only manage_settings never bounces toward
@@ -103,11 +122,16 @@ export function proxy(request) {
   const passThrough = () => NextResponse.next({ request: { headers: requestHeaders } });
 
   const { pathname } = request.nextUrl;
+  const isApi = pathname.startsWith("/api/");
+
+  if (isApi && !isAllowedOrigin(request)) {
+    return withCsp(NextResponse.json({ error: "Ruxsat etilmagan manba." }, { status: 403 }), nonce, csp);
+  }
+
   if (isPublic(pathname)) return withCsp(passThrough(), nonce, csp);
 
   const session = request.cookies.get(SESSION_COOKIE_NAME)?.value;
   const user = getSessionUser(session);
-  const isApi = pathname.startsWith("/api/");
 
   if (!user) {
     if (isApi) return withCsp(NextResponse.json({ error: "Tizimga kirilmagan." }, { status: 401 }), nonce, csp);

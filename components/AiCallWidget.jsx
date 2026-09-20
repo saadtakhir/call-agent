@@ -10,7 +10,7 @@ import { Phone, PhoneOff, Loader2, Download } from "lucide-react";
 // these three if it cuts people off too early/late or triggers on
 // background noise.
 const START_THRESHOLD = 6; // RMS*100 of the mic signal — speech is well above this, room noise well below
-const SILENCE_MS = 1200; // how long a pause must last before a turn is considered "done"
+const SILENCE_MS = 700; // how long a pause must last before a turn is considered "done"
 const MIN_SPEECH_MS = 400; // shorter than this is treated as noise, not speech, and discarded
 
 // A voice call has no visual "your turn" cue the way a chat UI does, so if
@@ -134,7 +134,8 @@ export default function AiCallWidget() {
   // just answering a plain question or confirming one (see
   // lastAiTextRef/finishRecording) — the confirm case is the one that
   // actually triggers a get_property_info search.
-  const fillerRef = useRef({ question: null, confirm: null }); // { blob, text } per type once loaded
+  const fillerRef = useRef({ question: [], confirm: [] }); // Array<{ key, blob, text }> per type once loaded
+  const fillerIndexRef = useRef({ question: 0, confirm: 0 }); // rotates through the loaded variants, no immediate repeat
   const lastAiTextRef = useRef(""); // the AI's most recent spoken line — checked for a trailing "to'g'rimi?"
 
   const silenceTimeoutRef = useRef(null);
@@ -280,26 +281,44 @@ export default function AiCallWidget() {
     }
   }
 
-  /** Loads both filler clips once at call start (fire-and-forget — called
-   * without awaiting from startCall, while the greeting plays) so whichever
-   * one finishRecording needs is already in memory by the time it's asked
-   * for. If a turn happens to finish before this resolves, or a given type
-   * failed to load, that one turn just plays no filler — a missing filler
-   * was always a tolerated fallback here, never a hard requirement. */
+  /** Loads up to 3 variants of each filler type once at call start (fire-
+   * and-forget — called without awaiting from startCall, while the
+   * greeting plays), then finishRecording rotates through whichever were
+   * loaded — so a long call doesn't hear the exact same "Bir daqiqa..."
+   * every single turn, with zero server round trip at actual play time.
+   * Each fetch excludes the previous one's key so the sequence doesn't
+   * just return the same single canned response 3 times; stops early once
+   * that stops turning up anything new (e.g. only one variant exists, or
+   * none are configured yet and it's a live-TTS fallback with no key at
+   * all). A turn finishing before this resolves, or nothing loading at
+   * all, just plays no filler — always a tolerated fallback, never a hard
+   * requirement. */
   async function prefetchFillers() {
-    async function load(type) {
-      try {
-        const res = await fetch(`/api/ai-call/filler?type=${type}`);
-        if (!res.ok) return null;
-        const text = decodeURIComponent(res.headers.get("X-Reply-Text") || "");
-        const blob = await res.blob();
-        return { blob, text };
-      } catch {
-        return null;
+    async function loadVariants(type) {
+      const variants = [];
+      let exclude = "";
+      for (let i = 0; i < 3; i++) {
+        try {
+          const res = await fetch(`/api/ai-call/filler?type=${type}&exclude=${encodeURIComponent(exclude)}`);
+          if (!res.ok) break;
+          const key = res.headers.get("X-Filler-Key") || "";
+          const text = decodeURIComponent(res.headers.get("X-Reply-Text") || "");
+          const blob = await res.blob();
+          if (!key || variants.some((v) => v.key === key)) {
+            if (variants.length === 0) variants.push({ key, blob, text });
+            break;
+          }
+          variants.push({ key, blob, text });
+          exclude = key;
+        } catch {
+          break;
+        }
       }
+      return variants;
     }
-    const [question, confirm] = await Promise.all([load("question"), load("confirm")]);
+    const [question, confirm] = await Promise.all([loadVariants("question"), loadVariants("confirm")]);
     fillerRef.current = { question, confirm };
+    fillerIndexRef.current = { question: 0, confirm: 0 };
   }
 
   /** The call's fixed opening line (see CALL_GREETING_TEXT in
@@ -416,7 +435,9 @@ export default function AiCallWidget() {
       // section 4), so that's the moment worth a "qidiryapman" filler
       // instead of the plain generic one.
       const fillerType = lastAiTextRef.current.trim().endsWith("to'g'rimi?") ? "confirm" : "question";
-      const filler = fillerRef.current[fillerType];
+      const variants = fillerRef.current[fillerType];
+      const filler = variants.length ? variants[fillerIndexRef.current[fillerType] % variants.length] : null;
+      if (filler) fillerIndexRef.current[fillerType] += 1;
       if (!turnSettled && filler) {
         setLog((prev) => [...prev, { role: "ai", text: filler.text }]);
         setPhase("speaking");
@@ -544,7 +565,8 @@ export default function AiCallWidget() {
       armedRef.current = false; // stays unarmed until the greeting finishes playing
       isRecordingRef.current = false;
       silenceStrikeRef.current = 0;
-      fillerRef.current = { question: null, confirm: null };
+      fillerRef.current = { question: [], confirm: [] };
+      fillerIndexRef.current = { question: 0, confirm: 0 };
       lastAiTextRef.current = "";
       prefetchFillers(); // fire-and-forget, loads alongside the greeting below
 

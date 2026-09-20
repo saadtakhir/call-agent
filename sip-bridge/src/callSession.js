@@ -17,7 +17,7 @@ const FRAME_BYTES = (SAMPLE_RATE * FRAME_MS * 2) / 1000; // 320 bytes = 160 int1
 // over 8kHz telephony PCM frames instead of 48kHz Web Audio samples — see
 // that file's own comments for the reasoning behind each constant.
 const START_THRESHOLD = 6;
-const SILENCE_MS = 1200;
+const SILENCE_MS = 700;
 const MIN_SPEECH_MS = 400;
 const PRE_ROLL_FRAMES = 20; // 20 * 20ms = 400ms, matching the widget's ~350ms pre-roll
 
@@ -76,6 +76,7 @@ export class CallSession {
     this.silenceStrike = 0;
 
     this.lastAiText = "";
+    this.lastFillerKey = { question: "", confirm: "" };
   }
 
   sendFrame(type, payload = Buffer.alloc(0)) {
@@ -273,9 +274,13 @@ export class CallSession {
 
   async playFiller(type) {
     try {
-      const res = await this.authClient.apiFetch(`/api/ai-call/filler?type=${type}`);
+      const exclude = this.lastFillerKey[type];
+      const res = await this.authClient.apiFetch(`/api/ai-call/filler?type=${type}&exclude=${encodeURIComponent(exclude)}`);
       if (!res.ok) return;
       const text = decodeURIComponent(res.headers.get("x-reply-text") || "");
+      // Remembered so the NEXT turn's filler of this same type (if the
+      // call has one) asks the server to skip repeating this exact clip.
+      this.lastFillerKey[type] = res.headers.get("x-filler-key") || "";
       console.log(`[sip-bridge] filler: ${text}`);
       const mp3 = Buffer.from(await res.arrayBuffer());
       await this.playResponse(mp3);

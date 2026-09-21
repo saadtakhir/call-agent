@@ -80,14 +80,25 @@ export default function CallUsagePanel() {
               <div style={{ fontWeight: 600, marginBottom: 6, fontSize: "0.9rem" }}>Taxminiy xarajat (faqat tasdiqlangan narxlar bo&apos;yicha)</div>
               <p style={{ margin: "0 0 4px" }}>
                 LLM (OpenAI): <strong>${data.llmCostUsd.toFixed(4)}</strong>
+                {data.llmCostUsdPerMinute !== null && (
+                  <span className="muted"> (1 daqiqada ${data.llmCostUsdPerMinute.toFixed(4)})</span>
+                )}
               </p>
               <p style={{ margin: "0 0 4px" }}>
                 TTS (ElevenLabs): <strong>${data.ttsCostUsd.toFixed(4)}</strong>
+                {data.ttsCostUsdPerMinute !== null && (
+                  <span className="muted"> (1 daqiqada ${data.ttsCostUsdPerMinute.toFixed(4)})</span>
+                )}
               </p>
               <p style={{ margin: 0 }}>
                 STT ({STT_PROVIDER_LABELS[data.currentSttProvider] || data.currentSttProvider}):{" "}
                 {data.sttCostKnown ? (
-                  <strong>{Math.round(data.sttCostSom).toLocaleString()} so&apos;m</strong>
+                  <>
+                    <strong>{Math.round(data.sttCostSom).toLocaleString()} so&apos;m</strong>
+                    {data.sttCostSomPerMinute !== null && (
+                      <span className="muted"> (1 daqiqada {Math.round(data.sttCostSomPerMinute).toLocaleString()} so&apos;m)</span>
+                    )}
+                  </>
                 ) : (
                   <span className="muted">narxi tasdiqlanmagan (faqat Muxlisa uchun narx tasdiqlangan)</span>
                 )}

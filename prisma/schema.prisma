@@ -56,9 +56,17 @@ model PropertyLead {
 model AiCallSession {
   sessionId      String   @id
   lastResponseId String?
-  active         Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  active         Boolean   @default(true)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  // Set once, only when the call is actually determined to have ended
+  // (endCallSession, or the opportunistic stale-session reaper) — NEVER
+  // relies on `updatedAt` for this, since that gets touched by unrelated
+  // later writes to the same row (Prisma's @updatedAt bumps it on ANY
+  // update) and would otherwise silently inflate durationSeconds by
+  // however long the row sat around before something next touched it.
+  endedAt DateTime?
 
   // "widget" (browser) or "sip" (sip-bridge/Asterisk) — set once at
   // /api/ai-call/start and never changed, powers the Qo'ng'iroqlar tarixi

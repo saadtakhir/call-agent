@@ -614,12 +614,17 @@ a {
 }
 .login-wrap::before {
   content: "";
-  position: absolute;
-  inset: -40px;
+  /* Fixed to the viewport, not the (max-width: 880px, centered) .container
+     this sits inside — position:absolute here would confine the gradient
+     to that narrower box, leaving a visible hard-edged rectangle where it
+     ends instead of blending across the full page. */
+  position: fixed;
+  inset: 0;
   z-index: -1;
   background:
     radial-gradient(480px circle at 18% 15%, var(--accent-soft), transparent 60%),
-    radial-gradient(420px circle at 85% 85%, var(--accent-soft), transparent 60%);
+    radial-gradient(420px circle at 85% 85%, var(--accent-soft), transparent 60%),
+    var(--bg);
   pointer-events: none;
 }
 .login-theme-toggle {

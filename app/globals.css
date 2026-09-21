@@ -1,18 +1,85 @@
+/* Light theme (default) — a refined, premium palette: cooler neutrals,
+   a richer indigo accent, and soft elevation shadows instead of flat
+   borders alone. Dark theme values are layered on top below, either via
+   the OS preference (no explicit choice made yet) or an explicit
+   data-theme attribute set by ThemeToggle — see app/layout.js, which
+   reads the saved cookie server-side so the correct theme paints on the
+   very first frame, no flash of the wrong one. */
 :root {
-  --bg: #f4f5f9;
+  --bg: #f6f7fb;
   --card: #ffffff;
-  --border: #e2e4ee;
-  --text: #171826;
-  --muted: #6b6f85;
-  --accent: #5b5ff5;
-  --accent-hover: #4a4de0;
-  --green: #178a4c;
-  --green-bg: #e1f5e9;
-  --red: #d64545;
-  --red-bg: #fce8e8;
-  --amber: #b3660a;
-  --amber-bg: #fbebd6;
-  --gray-bg: #eceefa;
+  --border: #e5e7f0;
+  --text: #14151f;
+  --muted: #6b7086;
+  --accent: #6366f1;
+  --accent-hover: #4f46e5;
+  --accent-soft: #eef0fe;
+  --green: #16a34a;
+  --green-bg: #dcfce7;
+  --red: #dc2626;
+  --red-bg: #fee2e2;
+  --amber: #d97706;
+  --amber-bg: #fef3c7;
+  --gray-bg: #eef0f7;
+
+  --shadow-sm: 0 1px 2px rgba(16, 24, 40, 0.04), 0 1px 3px rgba(16, 24, 40, 0.06);
+  --shadow-md: 0 4px 10px rgba(16, 24, 40, 0.06), 0 2px 4px rgba(16, 24, 40, 0.05);
+  --shadow-lg: 0 16px 40px rgba(16, 24, 40, 0.14);
+  --overlay: rgba(15, 16, 26, 0.5);
+
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c0d13;
+    --card: #15161f;
+    --border: #262837;
+    --text: #f1f2f7;
+    --muted: #8b8fa6;
+    --accent: #818cf8;
+    --accent-hover: #6f79f0;
+    --accent-soft: rgba(129, 140, 248, 0.14);
+    --green: #34d399;
+    --green-bg: rgba(52, 211, 153, 0.14);
+    --red: #f87171;
+    --red-bg: rgba(248, 113, 113, 0.14);
+    --amber: #fbbf24;
+    --amber-bg: rgba(251, 191, 36, 0.14);
+    --gray-bg: #1b1d29;
+
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
+    --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.55);
+    --overlay: rgba(0, 0, 0, 0.65);
+
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --bg: #0c0d13;
+  --card: #15161f;
+  --border: #262837;
+  --text: #f1f2f7;
+  --muted: #8b8fa6;
+  --accent: #818cf8;
+  --accent-hover: #6f79f0;
+  --accent-soft: rgba(129, 140, 248, 0.14);
+  --green: #34d399;
+  --green-bg: rgba(52, 211, 153, 0.14);
+  --red: #f87171;
+  --red-bg: rgba(248, 113, 113, 0.14);
+  --amber: #fbbf24;
+  --amber-bg: rgba(251, 191, 36, 0.14);
+  --gray-bg: #1b1d29;
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.55);
+  --overlay: rgba(0, 0, 0, 0.65);
+
+  color-scheme: dark;
 }
 
 * {
@@ -26,6 +93,7 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 14.5px;
   line-height: 1.5;
+  transition: background-color 0.18s ease, color 0.18s ease;
 }
 
 h1, h2, h3 {
@@ -95,6 +163,7 @@ a {
   border-radius: 8px;
   color: var(--text);
   cursor: pointer;
+  transition: background-color 0.15s ease;
 }
 .icon-btn:hover {
   background: var(--gray-bg);
@@ -103,7 +172,7 @@ a {
 .sidebar-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 10, 20, 0.45);
+  background: var(--overlay);
   z-index: 30;
 }
 
@@ -121,7 +190,7 @@ a {
   background: var(--card);
   border-right: 1px solid var(--border);
   transform: translateX(-100%);
-  transition: transform 0.22s ease;
+  transition: transform 0.22s ease, background-color 0.18s ease, border-color 0.18s ease;
 }
 .sidebar.open {
   transform: translateX(0);
@@ -150,23 +219,33 @@ a {
   align-items: center;
   gap: 10px;
   padding: 12px;
-  border-radius: 8px;
+  border-radius: 10px;
   text-decoration: none;
   color: var(--muted);
   font-weight: 500;
   font-size: 0.9rem;
+  transition: background-color 0.15s ease, color 0.15s ease;
 }
 .sidebar-nav a:hover {
   background: var(--gray-bg);
+  color: var(--text);
 }
 .sidebar-nav a.active {
   background: var(--accent);
   color: #fff;
+  box-shadow: var(--shadow-sm);
 }
 .sidebar-footer {
   border-top: 1px solid var(--border);
   padding-top: 14px;
   margin-top: 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sidebar-footer-user {
+  flex: 1;
+  min-width: 0;
 }
 
 @media (min-width: 768px) {
@@ -204,40 +283,49 @@ a {
   gap: 7px;
   padding: 9px 16px;
   border: none;
-  border-radius: 8px;
+  border-radius: 9px;
   background: var(--accent);
   color: #fff;
   font-size: 0.88rem;
   font-weight: 600;
   cursor: pointer;
   white-space: nowrap;
+  box-shadow: var(--shadow-sm);
+  transition: background-color 0.15s ease, box-shadow 0.15s ease, transform 0.1s ease;
 }
 .btn:hover:not(:disabled) {
   background: var(--accent-hover);
+  box-shadow: var(--shadow-md);
+}
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
 }
 .btn:disabled {
   opacity: 0.55;
   cursor: default;
+  box-shadow: none;
 }
 .btn-green {
   background: var(--green);
 }
 .btn-green:hover:not(:disabled) {
-  background: #146e3c;
+  filter: brightness(0.9);
 }
 .btn-danger {
   background: var(--red);
 }
 .btn-danger:hover:not(:disabled) {
-  background: #b93a3a;
+  filter: brightness(0.9);
 }
 .btn-outline {
   background: var(--card);
   color: var(--text);
   border: 1px solid var(--border);
+  box-shadow: none;
 }
 .btn-outline:hover:not(:disabled) {
   background: var(--gray-bg);
+  box-shadow: none;
 }
 .btn-icon {
   padding: 8px;
@@ -263,11 +351,18 @@ a {
 .section {
   margin-top: 22px;
 }
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px;
+  box-shadow: var(--shadow-sm);
+}
 
 /* --- banners --- */
 .error-banner {
   background: var(--red-bg);
-  color: #8a2b2b;
+  color: var(--red);
   border-radius: 8px;
   padding: 10px 14px;
   margin: 12px 0;
@@ -314,10 +409,12 @@ a {
   font-family: inherit;
   background: var(--card);
   color: var(--text);
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .manage-input:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: -1px;
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
 }
 
 .add-channel-row {
@@ -348,6 +445,17 @@ a {
   border-bottom: 1px solid var(--border);
   vertical-align: top;
   text-align: center;
+}
+.analog-table tbody tr {
+  transition: background-color 0.12s ease;
+}
+.analog-table tbody tr:hover {
+  background: var(--gray-bg);
+}
+.manage-table th,
+.manage-table td {
+  padding: 8px;
+  white-space: nowrap;
 }
 
 /* --- tab toggle (segmented control) --- */
@@ -396,6 +504,7 @@ a {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 8px;
+  box-shadow: var(--shadow-sm);
 }
 .settings-tab {
   display: flex;
@@ -404,11 +513,12 @@ a {
   width: 100%;
   padding: 10px 12px;
   border: none;
-  border-radius: 8px;
+  border-radius: 9px;
   background: transparent;
   text-align: left;
   cursor: pointer;
   font-family: inherit;
+  transition: background-color 0.15s ease;
 }
 .settings-tab:hover:not(.active) {
   background: var(--gray-bg);
@@ -437,6 +547,7 @@ a {
 }
 .settings-tab.active {
   background: var(--accent);
+  box-shadow: var(--shadow-sm);
 }
 .settings-tab.active .settings-tab-icon {
   background: rgba(255, 255, 255, 0.2);
@@ -468,7 +579,7 @@ a {
 .confirm-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(10, 10, 20, 0.45);
+  background: var(--overlay);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -476,11 +587,12 @@ a {
 }
 .confirm-card {
   background: var(--card);
-  border-radius: 12px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
   padding: 22px 24px;
   max-width: 360px;
   width: 90%;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-lg);
 }
 .confirm-actions {
   display: flex;
@@ -491,21 +603,70 @@ a {
 
 /* --- login page --- */
 .login-wrap {
+  position: relative;
   min-height: calc(100vh - 88px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  isolation: isolate;
+}
+.login-wrap::before {
+  content: "";
+  position: absolute;
+  inset: -40px;
+  z-index: -1;
+  background:
+    radial-gradient(480px circle at 18% 15%, var(--accent-soft), transparent 60%),
+    radial-gradient(420px circle at 85% 85%, var(--accent-soft), transparent 60%);
+  pointer-events: none;
+}
+.login-theme-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.login-brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+.login-brand-icon {
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent), var(--accent-hover));
+  color: #fff;
+  box-shadow: var(--shadow-md);
+}
+.login-brand-name {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text);
 }
 .login-card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 32px 30px;
+  border-radius: 18px;
+  padding: 30px 28px;
   width: 100%;
-  max-width: 340px;
+  max-width: 360px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 16px;
+  box-shadow: var(--shadow-lg);
+}
+.login-card h1 {
+  font-size: 1.3rem;
+}
+.login-card-subtitle {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
 }
 .login-field {
   display: flex;
@@ -518,4 +679,19 @@ a {
 .login-field input {
   font-weight: 400;
   color: var(--text);
+}
+.login-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.login-input-wrap svg {
+  position: absolute;
+  left: 12px;
+  color: var(--muted);
+  pointer-events: none;
+}
+.login-input-wrap input {
+  width: 100%;
+  padding-left: 36px;
 }

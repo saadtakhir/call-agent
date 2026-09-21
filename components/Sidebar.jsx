@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, PhoneCall, Activity, History, Wallet, Settings, Users, LogOut } from "lucide-react";
+import ThemeToggle from "./ThemeToggle";
 
 const LINKS = [
   { href: "/ai-qongiroq", label: "Suhbat", icon: PhoneCall, permission: "view_call" },
@@ -44,6 +45,9 @@ export default function Sidebar({ user }) {
           <Menu size={20} />
         </button>
         <div className="mobile-topbar-brand">AI Qo&apos;ng&apos;iroq Agent</div>
+        <div style={{ marginLeft: "auto" }}>
+          <ThemeToggle />
+        </div>
       </div>
 
       {open && <div className="sidebar-overlay" onClick={() => setOpen(false)} />}

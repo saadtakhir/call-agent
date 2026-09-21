@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Loader2, LogIn } from "lucide-react";
+import { Loader2, LogIn, PhoneCall, User, Lock } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -34,22 +35,40 @@ export default function LoginPage() {
 
   return (
     <div className="login-wrap">
+      <div className="login-theme-toggle">
+        <ThemeToggle />
+      </div>
+      <div className="login-brand">
+        <div className="login-brand-icon">
+          <PhoneCall size={22} />
+        </div>
+        <div className="login-brand-name">AI Qo&apos;ng&apos;iroq Agent</div>
+      </div>
       <form className="login-card" onSubmit={handleSubmit}>
-        <h1>Kirish</h1>
+        <div>
+          <h1>Xush kelibsiz</h1>
+          <p className="muted login-card-subtitle">Davom etish uchun tizimga kiring</p>
+        </div>
         {error && <div className="error-banner">{error}</div>}
         <label className="login-field">
           Login
-          <input className="manage-input" value={username} onChange={(e) => setUsername(e.target.value)} autoFocus autoComplete="username" />
+          <div className="login-input-wrap">
+            <User size={15} />
+            <input className="manage-input" value={username} onChange={(e) => setUsername(e.target.value)} autoFocus autoComplete="username" />
+          </div>
         </label>
         <label className="login-field">
           Parol
-          <input
-            className="manage-input"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            autoComplete="current-password"
-          />
+          <div className="login-input-wrap">
+            <Lock size={15} />
+            <input
+              className="manage-input"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              autoComplete="current-password"
+            />
+          </div>
         </label>
         <button className="btn btn-green" type="submit" disabled={loading || !username || !password}>
           {loading ? <Loader2 size={14} className="spin" /> : <LogIn size={14} />}

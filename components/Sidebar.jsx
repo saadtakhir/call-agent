@@ -68,8 +68,9 @@ export default function Sidebar({ user }) {
           ))}
         </nav>
         <div className="sidebar-footer">
-          <div className="muted" style={{ fontSize: "0.8rem", padding: "0 10px 10px" }}>
-            {user.username}
+          <div className="sidebar-footer-row">
+            <div className="muted" style={{ fontSize: "0.8rem" }}>{user.username}</div>
+            <ThemeToggle />
           </div>
           <button className="btn btn-outline" style={{ width: "100%" }} onClick={handleLogout}>
             <LogOut size={14} />

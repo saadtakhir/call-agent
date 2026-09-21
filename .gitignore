@@ -5,3 +5,13 @@ node_modules
 .env*.local
 .vercel
 *.log
+
+# SSH keypairs generated locally for VPS access (e.g. sip-bridge's
+# deploy key) — never belong in the repo regardless of what they're named.
+sip_bridge_deploy_key
+sip_bridge_deploy_key.pub
+*.pem
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub

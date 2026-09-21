@@ -34,7 +34,10 @@ const PATH_PERMISSIONS = [
   { prefix: "/api/ai-call/call-usage", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/ai-qongiroq-sozlamalar", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/active-sessions", permission: PERMISSIONS.VIEW_DASHBOARD },
+  { prefix: "/api/ai-call/hangup", permission: PERMISSIONS.VIEW_DASHBOARD },
+  { prefix: "/api/ai-call/call-history", permission: PERMISSIONS.VIEW_DASHBOARD },
   { prefix: "/faol-suhbatlar", permission: PERMISSIONS.VIEW_DASHBOARD },
+  { prefix: "/qongiroqlar-tarixi", permission: PERMISSIONS.VIEW_DASHBOARD },
   { prefix: "/api/ai-call", permission: PERMISSIONS.VIEW_CALL },
   { prefix: "/ai-qongiroq", permission: PERMISSIONS.VIEW_CALL },
 ];

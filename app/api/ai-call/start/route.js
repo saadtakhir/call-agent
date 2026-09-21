@@ -21,9 +21,10 @@ const WINDOW_MS = 5 * 60 * 1000;
 export async function GET(request) {
   const sessionId = request.nextUrl.searchParams.get("sessionId");
   if (!sessionId) return NextResponse.json({ error: "\"sessionId\" kerak." }, { status: 400 });
+  const channel = request.nextUrl.searchParams.get("channel") === "sip" ? "sip" : "widget";
 
   try {
-    const started = await tryStartCall(sessionId);
+    const started = await tryStartCall(sessionId, channel);
     if (!started) {
       const max = await getMaxConcurrentCalls();
       return NextResponse.json(

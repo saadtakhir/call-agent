@@ -153,6 +153,7 @@ export default function AiCallWidget() {
 
   const timerIntervalRef = useRef(null);
   const callStartRef = useRef(0);
+  const hangupCheckIntervalRef = useRef(null); // polls for an admin-triggered forced hangup (see Faol suhbatlar)
 
   // Full-call recording: both the mic (via the same graph the VAD already
   // uses) and every played AI reply are routed into one shared
@@ -592,6 +593,19 @@ export default function AiCallWidget() {
         setElapsedSec(Math.floor((Date.now() - callStartRef.current) / 1000));
       }, 1000);
 
+      // No server-push channel exists to reach a live browser tab, so an
+      // admin's "Tugatish" click on Faol suhbatlar can only be delivered
+      // by having this side poll for it.
+      hangupCheckIntervalRef.current = setInterval(async () => {
+        try {
+          const res = await fetch(`/api/ai-call/hangup-check?sessionId=${sessionIdRef.current}`);
+          const data = await res.json();
+          if (data.hangup) endCall();
+        } catch {
+          // Best-effort — a missed poll just means the next one 3s later checks again.
+        }
+      }, 3000);
+
       await playGreeting();
     } catch (err) {
       notifyCallEnded(sessionIdRef.current); // capacity slot was already reserved above
@@ -607,6 +621,7 @@ export default function AiCallWidget() {
     armedRef.current = false;
     clearSilenceWatchdog();
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
+    if (hangupCheckIntervalRef.current) clearInterval(hangupCheckIntervalRef.current);
     processorRef.current?.disconnect();
     silentGainRef.current?.disconnect();
     streamRef.current?.getTracks().forEach((t) => t.stop());

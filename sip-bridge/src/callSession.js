@@ -86,6 +86,7 @@ export class CallSession {
 
     this.lastAiText = "";
     this.lastFillerKey = { question: "", confirm: "" };
+    this.hangupCheckInterval = null;
   }
 
   sendFrame(type, payload = Buffer.alloc(0)) {
@@ -126,7 +127,7 @@ export class CallSession {
     this.sessionId = randomUUID();
     console.log(`[sip-bridge] call starting: session=${this.sessionId} asterisk=${this.asteriskCallId}`);
     try {
-      const res = await this.authClient.apiFetch(`/api/ai-call/start?sessionId=${this.sessionId}`);
+      const res = await this.authClient.apiFetch(`/api/ai-call/start?sessionId=${this.sessionId}&channel=sip`);
       if (!res.ok) {
         // No generic "speak this text" endpoint exists outside an active
         // session, so a caller hitting capacity just hears nothing before
@@ -141,6 +142,20 @@ export class CallSession {
       this.end("start failed");
       return;
     }
+
+    // No server-push channel exists to reach this VPS process, so an
+    // admin's "Tugatish" click on Faol suhbatlar can only be delivered by
+    // having this side poll for it.
+    this.hangupCheckInterval = setInterval(async () => {
+      try {
+        const res = await this.authClient.apiFetch(`/api/ai-call/hangup-check?sessionId=${this.sessionId}`);
+        const data = await res.json();
+        if (data.hangup) this.end("admin hangup");
+      } catch {
+        // Best-effort — a missed poll just means the next one 3s later checks again.
+      }
+    }, 3000);
+
     await this.playGreeting();
   }
 
@@ -323,6 +338,7 @@ export class CallSession {
     this.ended = true;
     this.armed = false;
     this.clearSilenceWatchdog();
+    if (this.hangupCheckInterval) clearInterval(this.hangupCheckInterval);
     console.log(`[sip-bridge] call ended (${reason}): session=${this.sessionId}`);
     if (this.sessionId) {
       this.authClient.apiFetch(`/api/ai-call/end?sessionId=${this.sessionId}`, { method: "POST" }).catch(() => {});

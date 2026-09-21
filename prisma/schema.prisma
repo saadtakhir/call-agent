@@ -60,6 +60,23 @@ model AiCallSession {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  // "widget" (browser) or "sip" (sip-bridge/Asterisk) — set once at
+  // /api/ai-call/start and never changed, powers the Qo'ng'iroqlar tarixi
+  // page's "Kanal" column.
+  channel String @default("widget")
+
+  // Only ever populated for "sip" calls, and only once the Asterisk
+  // dialplan is extended to actually pass CALLERID(num) through — nothing
+  // in the current AudioSocket integration captures it yet, so this stays
+  // null for now (shown as "Noma'lum" in the history table).
+  callerNumber String?
+
+  // Set by the "Tugatish" button on Faol suhbatlar (see
+  // lib/aiCallCapacity.js's requestHangup) and polled by both the widget
+  // and sip-bridge during an active call — there's no server-push
+  // channel to either client, so polling is the only option.
+  hangupRequested Boolean @default(false)
+
   // Per-call usage, accumulated turn by turn (see lib/callUsage.js) — the
   // basis for the real, per-minute cost averages shown on the Xarajatlar
   // panel, as opposed to ProviderUsagePanel's account-wide provider totals.
@@ -70,6 +87,7 @@ model AiCallSession {
   ttsCharacters   Int   @default(0)
 
   @@index([active, updatedAt])
+  @@index([createdAt])
 }
 
 /** Generic fixed-window IP rate limiter (see lib/rateLimit.js) — currently

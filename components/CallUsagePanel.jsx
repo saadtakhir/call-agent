@@ -125,10 +125,16 @@ export default function CallUsagePanel() {
                 )}
               </p>
               {data.callCount > 0 && (
-                <p className="muted" style={{ fontSize: "0.8rem", marginTop: 10, marginBottom: 0 }}>
-                  O&apos;rtacha suhbat davomiyligi: {(data.sttSeconds / data.callCount).toFixed(1)}s (bu faqat
-                  gapirilgan audio, jimlik hisobga olinmagan)
-                </p>
+                <>
+                  <p className="muted" style={{ fontSize: "0.8rem", marginTop: 10, marginBottom: 2 }}>
+                    O&apos;rtacha qo&apos;ng&apos;iroq davomiyligi: {(data.totalCallSeconds / data.callCount).toFixed(0)}s —
+                    yuqoridagi &quot;1 daqiqada&quot; narxlar shu asosda hisoblanadi (haddan tashqari uzun qo&apos;ng&apos;iroqlar
+                    maks. sozlamadagi chegaragacha cheklab hisoblanadi)
+                  </p>
+                  <p className="muted" style={{ fontSize: "0.8rem", marginTop: 0, marginBottom: 0 }}>
+                    O&apos;rtacha gapirilgan audio: {(data.sttSeconds / data.callCount).toFixed(1)}s (jimlik hisobga olinmagan)
+                  </p>
+                </>
               )}
             </div>
           </div>

@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Trash2 } from "lucide-react";
+import { useConfirm } from "./useConfirm";
 
 const PAGE_SIZE = 50;
 
@@ -33,10 +34,12 @@ const CHANNEL_LABELS = { widget: "Brauzer", sip: "SIP" };
  * CALLERID(num) through the AudioSocket integration; nothing captures it
  * yet. */
 export default function CallHistoryPanel() {
+  const { confirm, dialog } = useConfirm();
   const [data, setData] = useState(null);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const [deletingId, setDeletingId] = useState("");
 
   useEffect(() => {
     (async () => {
@@ -54,6 +57,26 @@ export default function CallHistoryPanel() {
       }
     })();
   }, [page]);
+
+  async function removeCall(call) {
+    if (!(await confirm(`${formatDateTime(call.createdAt)} qo'ng'iroqni tarixdan o'chirishni tasdiqlaysizmi?`))) return;
+    setDeletingId(call.sessionId);
+    setError("");
+    try {
+      const res = await fetch(`/api/ai-call/call-history?sessionId=${encodeURIComponent(call.sessionId)}`, { method: "DELETE" });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || "Xatolik");
+      setData((prev) => ({
+        ...prev,
+        calls: prev.calls.filter((c) => c.sessionId !== call.sessionId),
+        total: prev.total - 1,
+      }));
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setDeletingId("");
+    }
+  }
 
   const totalPages = data ? Math.max(1, Math.ceil(data.total / PAGE_SIZE)) : 1;
 
@@ -77,6 +100,7 @@ export default function CallHistoryPanel() {
                   <th>Telefon raqam</th>
                   <th>Kanal</th>
                   <th>Davomiyligi (daq:son)</th>
+                  <th></th>
                 </tr>
               </thead>
               <tbody>
@@ -89,6 +113,18 @@ export default function CallHistoryPanel() {
                     <td style={{ fontVariantNumeric: "tabular-nums" }}>
                       {formatDuration(call.durationSeconds)}
                       {call.active && <span className="muted"> (davom etmoqda)</span>}
+                    </td>
+                    <td>
+                      {!call.active && (
+                        <button
+                          className="btn btn-danger btn-icon"
+                          onClick={() => removeCall(call)}
+                          disabled={deletingId === call.sessionId}
+                          title="Tarixdan o'chirish"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -114,6 +150,7 @@ export default function CallHistoryPanel() {
           </div>
         </>
       )}
+      {dialog}
     </div>
   );
 }

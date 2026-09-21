@@ -26,6 +26,7 @@
   --shadow-md: 0 4px 10px rgba(16, 24, 40, 0.06), 0 2px 4px rgba(16, 24, 40, 0.05);
   --shadow-lg: 0 16px 40px rgba(16, 24, 40, 0.14);
   --overlay: rgba(15, 16, 26, 0.5);
+  --red-glow: rgba(220, 38, 38, 0.35);
 
   color-scheme: light;
 }
@@ -52,6 +53,7 @@
     --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
     --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.55);
     --overlay: rgba(0, 0, 0, 0.65);
+    --red-glow: rgba(248, 113, 113, 0.35);
 
     color-scheme: dark;
   }
@@ -78,6 +80,7 @@
   --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 20px 50px rgba(0, 0, 0, 0.55);
   --overlay: rgba(0, 0, 0, 0.65);
+  --red-glow: rgba(248, 113, 113, 0.35);
 
   color-scheme: dark;
 }
@@ -90,7 +93,7 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--text);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-family: var(--font-sans), -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   font-size: 14.5px;
   line-height: 1.5;
   transition: background-color 0.18s ease, color 0.18s ease;
@@ -98,6 +101,41 @@ body {
 
 h1, h2, h3 {
   margin: 0 0 4px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* --- page header (icon + title + subtitle, one per page) --- */
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.page-header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  flex-shrink: 0;
+  border-radius: 12px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.page-header-text {
+  min-width: 0;
+}
+.page-header-text h1 {
+  font-size: 1.35rem;
+}
+.page-header-text p {
+  margin: 0;
+  font-size: 0.88rem;
+}
+.page-header-actions {
+  margin-left: auto;
+  flex-shrink: 0;
 }
 
 a {
@@ -350,13 +388,6 @@ a {
 }
 
 /* --- layout helpers --- */
-.toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 4px;
-}
 .section {
   margin-top: 22px;
 }
@@ -434,6 +465,18 @@ a {
 }
 
 /* --- tables --- */
+/* Wraps a .table-scroll so the table itself reads as one elevated surface
+   (rounded corners, border, shadow) instead of a bare grid of lines sitting
+   directly on the page background — overflow:hidden clips the header's
+   background tint to the same rounded corners; the inner .table-scroll
+   still scrolls horizontally on its own. */
+.table-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
 .table-scroll {
   overflow-x: auto;
 }
@@ -444,16 +487,24 @@ a {
 }
 .analog-table th {
   text-align: center;
-  padding: 8px 10px;
+  padding: 11px 12px;
   color: var(--muted);
   font-weight: 600;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  background: var(--gray-bg);
   border-bottom: 1px solid var(--border);
+  white-space: nowrap;
 }
 .analog-table td {
-  padding: 10px;
+  padding: 12px;
   border-bottom: 1px solid var(--border);
   vertical-align: top;
   text-align: center;
+}
+.analog-table tbody tr:last-child td {
+  border-bottom: none;
 }
 .analog-table tbody tr {
   transition: background-color 0.12s ease;
@@ -463,7 +514,7 @@ a {
 }
 .manage-table th,
 .manage-table td {
-  padding: 8px;
+  padding: 8px 12px;
   white-space: nowrap;
 }
 
@@ -708,4 +759,118 @@ a {
 .login-input-wrap input {
   width: 100%;
   padding-left: 36px;
+}
+
+/* --- call hero (AiCallWidget's main start/hang-up control) --- */
+.call-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  padding: 40px 20px;
+  text-align: center;
+}
+.call-hero-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 84px;
+  height: 84px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, var(--green), #0d8f42);
+  box-shadow: var(--shadow-lg);
+  transition: transform 0.15s ease;
+}
+.call-hero-button:hover {
+  transform: scale(1.04);
+}
+.call-hero-button:active {
+  transform: scale(0.97);
+}
+.call-hero-button-active {
+  background: linear-gradient(135deg, var(--red), #b3311f);
+  animation: call-pulse 1.8s ease-in-out infinite;
+}
+@keyframes call-pulse {
+  0%, 100% {
+    box-shadow: var(--shadow-lg), 0 0 0 0 var(--red-glow);
+  }
+  50% {
+    box-shadow: var(--shadow-lg), 0 0 0 14px transparent;
+  }
+}
+.call-hero-status {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* --- chat bubbles (AiCallWidget's transcript) --- */
+.chat-log {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.chat-bubble-row {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 80%;
+}
+.chat-bubble-row-user {
+  align-self: flex-end;
+  align-items: flex-end;
+}
+.chat-bubble-role {
+  padding: 0 4px;
+  margin-bottom: 3px;
+  font-size: 0.72rem;
+  color: var(--muted);
+}
+.chat-bubble {
+  padding: 10px 14px;
+  border-radius: 14px;
+  border-bottom-left-radius: 4px;
+  font-size: 0.9rem;
+  line-height: 1.45;
+  background: var(--gray-bg);
+  color: var(--text);
+}
+.chat-bubble-user {
+  background: var(--accent);
+  color: #fff;
+  border-bottom-left-radius: 14px;
+  border-bottom-right-radius: 4px;
+}
+
+/* --- stat cards (usage/cost panels) --- */
+.stat-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 16px;
+}
+.stat-card-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.stat-card-label {
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.stat-card-value {
+  font-size: 1.3rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
 }

@@ -74,6 +74,7 @@ export default function LoginAttemptsPanel() {
       ) : locked.length === 0 ? (
         <p className="muted">Hozircha bloklangan login yoki IP yo&apos;q.</p>
       ) : (
+        <div className="table-card">
         <div className="table-scroll">
           <table className="analog-table manage-table">
             <thead>
@@ -104,6 +105,7 @@ export default function LoginAttemptsPanel() {
               ))}
             </tbody>
           </table>
+        </div>
         </div>
       )}
     </div>

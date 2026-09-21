@@ -662,39 +662,31 @@ export default function AiCallWidget() {
 
   return (
     <div>
-      <div className="toolbar">
-        <h2 style={{ margin: 0 }}>AI qo&apos;ng&apos;iroq (test)</h2>
-      </div>
-      <p className="muted" style={{ marginBottom: 18 }}>
-        Tajriba uchun: brauzer orqali AI bilan jonli suhbat. Ovoz OpenAI orqali matnga aylantiriladi, javobni
-        e-content.uz&apos;ning o&apos;zi (OpenAI) o&apos;ylab topadi, ElevenLabs uni ovozga aylantirib qaytaradi.
-      </p>
-
       {error && <div className="error-banner">{error}</div>}
 
-      <div className="section" style={{ display: "flex", alignItems: "center", gap: 14, flexWrap: "wrap" }}>
-        {!inCall ? (
-          <button className="btn btn-green" onClick={startCall}>
-            <Phone size={14} />
-            Qo&apos;ng&apos;iroqni boshlash
-          </button>
-        ) : (
-          <button className="btn btn-danger" onClick={endCall}>
-            <PhoneOff size={14} />
-            {phase === "queued" ? "Bekor qilish" : "Qo'ng'iroqni tugatish"}
-          </button>
-        )}
-        <span className={`status-pill ${phase === "idle" ? "status-gray" : phase === "speaking" ? "status-green" : "status-amber"}`}>
-          {(phase === "connecting" || phase === "processing" || phase === "queued") && <Loader2 size={12} className="spin" />}
-          {PHASE_LABELS[phase]}
-        </span>
-        {inCall && phase !== "queued" && (
-          <span className="muted" style={{ fontVariantNumeric: "tabular-nums" }}>{formatDuration(elapsedSec)}</span>
-        )}
+      <div className="call-hero card">
+        <button
+          className={`call-hero-button${inCall ? " call-hero-button-active" : ""}`}
+          onClick={inCall ? endCall : startCall}
+          aria-label={inCall ? "Qo'ng'iroqni tugatish" : "Qo'ng'iroqni boshlash"}
+        >
+          {inCall ? <PhoneOff size={28} /> : <Phone size={28} />}
+        </button>
+        <div className="call-hero-status">
+          <span className={`status-pill ${phase === "idle" ? "status-gray" : phase === "speaking" ? "status-green" : "status-amber"}`}>
+            {(phase === "connecting" || phase === "processing" || phase === "queued") && <Loader2 size={12} className="spin" />}
+            {PHASE_LABELS[phase]}
+          </span>
+          {inCall && phase !== "queued" && (
+            <span className="muted" style={{ fontVariantNumeric: "tabular-nums" }}>{formatDuration(elapsedSec)}</span>
+          )}
+        </div>
+        {!inCall && <p className="muted" style={{ margin: 0, fontSize: "0.85rem" }}>Qo&apos;ng&apos;iroqni boshlash uchun bosing</p>}
+        {inCall && phase === "queued" && <p className="muted" style={{ margin: 0, fontSize: "0.85rem" }}>Bekor qilish uchun bosing</p>}
       </div>
 
       {recordingUrl && (
-        <div className="section">
+        <div className="section card">
           <div style={{ fontWeight: 600, marginBottom: 8 }}>Suhbat yozuvi</div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
             <audio controls src={recordingUrl} style={{ maxWidth: "100%" }} />
@@ -710,13 +702,11 @@ export default function AiCallWidget() {
         {log.length === 0 ? (
           <p className="muted">Suhbat hali boshlanmagan.</p>
         ) : (
-          <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+          <div className="chat-log">
             {log.map((item, i) => (
-              <div key={i} style={{ alignSelf: item.role === "user" ? "flex-end" : "flex-start", maxWidth: "80%" }}>
-                <span className="muted" style={{ display: "block", fontSize: "0.75rem", marginBottom: 2 }}>
-                  {item.role === "user" ? "Siz" : "AI"}
-                </span>
-                <div className={`status-pill ${item.role === "user" ? "status-gray" : "status-green"}`} style={{ display: "inline", whiteSpace: "normal" }}>
+              <div key={i} className={`chat-bubble-row${item.role === "user" ? " chat-bubble-row-user" : ""}`}>
+                <span className="chat-bubble-role">{item.role === "user" ? "Siz" : "AI"}</span>
+                <div className={`chat-bubble${item.role === "user" ? " chat-bubble-user" : ""}`}>
                   {item.text || <span className="muted">(bo&apos;sh)</span>}
                 </div>
               </div>

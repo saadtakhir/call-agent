@@ -1,8 +1,14 @@
 import "./globals.css";
+import { Inter } from "next/font/google";
 import { cookies } from "next/headers";
 import Sidebar from "@/components/Sidebar";
 import PwaRegister from "@/components/PwaRegister";
 import { getSessionUser, SESSION_COOKIE_NAME } from "@/lib/auth";
+
+// next/font self-hosts the font file (no external request at runtime),
+// which is also why this needs no font-src addition to proxy.js's CSP —
+// it's served from this same origin like any other static asset.
+const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
 export const metadata = {
   title: "AI Qo'ng'iroq Agent",

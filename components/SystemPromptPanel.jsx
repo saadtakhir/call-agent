@@ -76,9 +76,6 @@ export default function SystemPromptPanel() {
 
   return (
     <div>
-      <div className="toolbar">
-        <h2 style={{ margin: 0 }}>System Message</h2>
-      </div>
       <p className="muted" style={{ marginBottom: 18 }}>
         AI Agent&apos;ning xatti-harakat qoidalari. Bu yerdagi o&apos;zgarishlar keyingi qo&apos;ng&apos;iroqda darhol
         qo&apos;llaniladi — kod o&apos;zgartirish yoki qayta deploy qilish shart emas.

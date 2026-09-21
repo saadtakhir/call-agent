@@ -57,13 +57,10 @@ export default function MaxConcurrentCallsPanel() {
 
   return (
     <div>
-      <div className="toolbar">
-        <h2 style={{ margin: 0 }}>Bir vaqtdagi suhbatlar chegarasi</h2>
-      </div>
-      <p className="muted" style={{ marginBottom: 18 }}>
+      <div style={{ fontWeight: 600, marginBottom: 8 }}>Bir vaqtdagi suhbatlar chegarasi</div>
+      <p className="muted" style={{ marginBottom: 12, fontSize: "0.85rem" }}>
         Bir vaqtning o&apos;zida nechta AI qo&apos;ng&apos;iroq bo&apos;lishi mumkinligi — ElevenLabs/OpenAI
-        hisobingizning bir vaqtdagi so&apos;rovlar chegarasidan oshib ketmaslik uchun. O&apos;zgartirish keyingi
-        qo&apos;ng&apos;iroqdan boshlab darhol qo&apos;llaniladi.
+        hisobingizning bir vaqtdagi so&apos;rovlar chegarasidan oshib ketmaslik uchun.
       </p>
 
       {error && <div className="error-banner">{error}</div>}

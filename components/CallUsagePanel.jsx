@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Phone, Mic, Brain, Volume2 } from "lucide-react";
 
 function formatMinutes(seconds) {
   return (seconds / 60).toFixed(1);
@@ -48,26 +49,30 @@ export default function CallUsagePanel() {
         <p className="muted">Yuklanmoqda...</p>
       ) : (
         data && (
-          <div style={{ border: "1px solid var(--border)", borderRadius: 12, padding: 18 }}>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: 16, marginBottom: 16 }}>
+          <div className="card">
+            <div className="stat-card-grid" style={{ marginBottom: 16 }}>
               <div>
-                <div className="muted" style={{ fontSize: "0.78rem" }}>Qo&apos;ng&apos;iroqlar</div>
-                <div style={{ fontSize: "1.3rem", fontWeight: 700 }}>{data.callCount}</div>
+                <div className="stat-card-icon"><Phone size={15} /></div>
+                <div className="stat-card-label">Qo&apos;ng&apos;iroqlar</div>
+                <div className="stat-card-value">{data.callCount}</div>
               </div>
               <div>
-                <div className="muted" style={{ fontSize: "0.78rem" }}>STT (daqiqa)</div>
-                <div style={{ fontSize: "1.3rem", fontWeight: 700 }}>{formatMinutes(data.sttSeconds)}</div>
+                <div className="stat-card-icon"><Mic size={15} /></div>
+                <div className="stat-card-label">STT (daqiqa)</div>
+                <div className="stat-card-value">{formatMinutes(data.sttSeconds)}</div>
               </div>
               <div>
-                <div className="muted" style={{ fontSize: "0.78rem" }}>LLM token (kirish/keshlangan/chiqish)</div>
-                <div style={{ fontSize: "1.1rem", fontWeight: 700 }}>
+                <div className="stat-card-icon"><Brain size={15} /></div>
+                <div className="stat-card-label">LLM token (kirish/keshlangan/chiqish)</div>
+                <div className="stat-card-value" style={{ fontSize: "1.1rem" }}>
                   {data.llmInputTokens.toLocaleString()} / {data.llmCachedTokens.toLocaleString()} /{" "}
                   {data.llmOutputTokens.toLocaleString()}
                 </div>
               </div>
               <div>
-                <div className="muted" style={{ fontSize: "0.78rem" }}>TTS belgilar</div>
-                <div style={{ fontSize: "1.3rem", fontWeight: 700 }}>{data.ttsCharacters.toLocaleString()}</div>
+                <div className="stat-card-icon"><Volume2 size={15} /></div>
+                <div className="stat-card-label">TTS belgilar</div>
+                <div className="stat-card-value">{data.ttsCharacters.toLocaleString()}</div>
               </div>
             </div>
 

@@ -119,17 +119,13 @@ export default function UsersPanel() {
 
   return (
     <div>
-      <div className="toolbar">
-        <h2 style={{ margin: 0 }}>Foydalanuvchilar</h2>
-      </div>
       <p className="muted" style={{ marginBottom: 18 }}>
-        Har bir foydalanuvchi faqat o&apos;ziga ruxsat berilgan bo&apos;limlarni ko&apos;radi. Ruxsatni
-        o&apos;zgartirish shu foydalanuvchining keyingi kirishidan boshlab qo&apos;llaniladi.
+        Ruxsatni o&apos;zgartirish shu foydalanuvchining keyingi kirishidan boshlab qo&apos;llaniladi.
       </p>
 
       {error && <div className="error-banner">{error}</div>}
 
-      <div className="section">
+      <div className="section card">
         <div style={{ fontWeight: 600, marginBottom: 8 }}>Yangi foydalanuvchi qo&apos;shish</div>
         <div className="add-channel-row">
           <input
@@ -168,6 +164,7 @@ export default function UsersPanel() {
         ) : users.length === 0 ? (
           <p className="muted">Hozircha qo&apos;shimcha foydalanuvchi yo&apos;q.</p>
         ) : (
+          <div className="table-card">
           <div className="table-scroll">
             <table className="analog-table manage-table">
               <thead>
@@ -206,6 +203,7 @@ export default function UsersPanel() {
                 ))}
               </tbody>
             </table>
+          </div>
           </div>
         )}
       </div>

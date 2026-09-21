@@ -84,12 +84,8 @@ export default function ActiveCallsPanel() {
 
   return (
     <div>
-      <div className="toolbar">
-        <h2 style={{ margin: 0 }}>Faol suhbatlar</h2>
-      </div>
       <p className="muted" style={{ marginBottom: 18 }}>
-        Hozir ketayotgan AI qo&apos;ng&apos;iroqlar — har {POLL_MS / 1000} soniyada yangilanadi. Ro&apos;yxat
-        mazmuni (nima gaplashilayotgani) ko&apos;rsatilmaydi, faqat qaysi suhbatlar band ekani.
+        Har {POLL_MS / 1000} soniyada yangilanadi.
       </p>
 
       {error && <div className="error-banner">{error}</div>}
@@ -108,6 +104,7 @@ export default function ActiveCallsPanel() {
             {sessions.length === 0 ? (
               <p className="muted">Hozircha faol suhbat yo&apos;q.</p>
             ) : (
+              <div className="table-card">
               <div className="table-scroll">
                 <table className="analog-table">
                   <thead>
@@ -142,6 +139,7 @@ export default function ActiveCallsPanel() {
                     ))}
                   </tbody>
                 </table>
+              </div>
               </div>
             )}
           </div>

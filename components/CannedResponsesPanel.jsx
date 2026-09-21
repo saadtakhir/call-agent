@@ -110,9 +110,6 @@ export default function CannedResponsesPanel() {
 
   return (
     <div>
-      <div className="toolbar">
-        <h2 style={{ margin: 0 }}>Tayyor javoblar kutubxonasi</h2>
-      </div>
       <p className="muted" style={{ marginBottom: 18 }}>
         Tez-tez takrorlanadigan javoblar (masalan &quot;tushunmadim&quot; xabari) uchun ovozni oldindan generatsiya qilib
         saqlaymiz — AI Agent javobi shu matn bilan aynan mos kelsa, ElevenLabs&apos;ga qayta murojaat qilinmaydi, tayyor
@@ -121,7 +118,7 @@ export default function CannedResponsesPanel() {
 
       {error && <div className="error-banner">{error}</div>}
 
-      <div className="section">
+      <div className="section card">
         <div style={{ fontWeight: 600, marginBottom: 8 }}>Yangi javob qo&apos;shish</div>
         <div className="add-channel-row">
           <input
@@ -151,6 +148,7 @@ export default function CannedResponsesPanel() {
         ) : items.length === 0 ? (
           <p className="muted">Hozircha tayyor javob yo&apos;q.</p>
         ) : (
+          <div className="table-card">
           <div className="table-scroll">
             <table className="analog-table manage-table">
               <thead>
@@ -175,6 +173,7 @@ export default function CannedResponsesPanel() {
                 ))}
               </tbody>
             </table>
+          </div>
           </div>
         )}
       </div>

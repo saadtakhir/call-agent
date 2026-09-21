@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { Volume2, Brain, Mic } from "lucide-react";
 
 // Avoids toLocaleDateString(...) here — Vercel's Node runtime ships without
 // full ICU locale data by default, so "uz-UZ" silently falls back to a
@@ -41,10 +42,8 @@ export default function ProviderUsagePanel() {
 
   return (
     <div>
-      <div className="toolbar">
-        <h2 style={{ margin: 0 }}>Provayder balanslari</h2>
-      </div>
-      <p className="muted" style={{ marginBottom: 18 }}>
+      <div style={{ fontWeight: 600, marginBottom: 8 }}>Provayder balanslari</div>
+      <p className="muted" style={{ marginTop: 0, marginBottom: 12, fontSize: "0.85rem" }}>
         Har bir provayderning o&apos;z hisobidagi joriy davr uchun ishlatilgan miqdori — API key&apos;ga
         tegishli hisobning umumiy holati (faqat shu ilova emas).
       </p>
@@ -56,8 +55,11 @@ export default function ProviderUsagePanel() {
       ) : (
         data && (
           <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            <div style={{ border: "1px solid var(--border)", borderRadius: 12, padding: 18 }}>
-              <div style={{ fontWeight: 600, marginBottom: 8 }}>ElevenLabs (TTS)</div>
+            <div className="card">
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                <span className="stat-card-icon" style={{ marginBottom: 0 }}><Volume2 size={16} /></span>
+                <div style={{ fontWeight: 600 }}>ElevenLabs (TTS)</div>
+              </div>
               {data.elevenLabs.ok ? (
                 <>
                   <div style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: 6 }}>
@@ -85,8 +87,11 @@ export default function ProviderUsagePanel() {
               )}
             </div>
 
-            <div style={{ border: "1px solid var(--border)", borderRadius: 12, padding: 18 }}>
-              <div style={{ fontWeight: 600, marginBottom: 8 }}>OpenAI (STT + LLM)</div>
+            <div className="card">
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                <span className="stat-card-icon" style={{ marginBottom: 0 }}><Brain size={16} /></span>
+                <div style={{ fontWeight: 600 }}>OpenAI (STT + LLM)</div>
+              </div>
               {data.openai.ok ? (
                 <p style={{ margin: 0 }}>
                   Oxirgi 30 kun: <strong>${data.openai.data.last30DaysUsd.toFixed(2)}</strong>
@@ -96,8 +101,11 @@ export default function ProviderUsagePanel() {
               )}
             </div>
 
-            <div style={{ border: "1px solid var(--border)", borderRadius: 12, padding: 18 }}>
-              <div style={{ fontWeight: 600, marginBottom: 8 }}>Muxlisa AI (STT)</div>
+            <div className="card">
+              <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 12 }}>
+                <span className="stat-card-icon" style={{ marginBottom: 0 }}><Mic size={16} /></span>
+                <div style={{ fontWeight: 600 }}>Muxlisa AI (STT)</div>
+              </div>
               <p className="muted" style={{ margin: 0 }}>{data.muxlisa.error}</p>
             </div>
           </div>

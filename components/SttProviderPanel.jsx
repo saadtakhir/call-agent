@@ -59,9 +59,6 @@ export default function SttProviderPanel() {
 
   return (
     <div>
-      <div className="toolbar">
-        <h2 style={{ margin: 0 }}>Ovozni tushunish (STT)</h2>
-      </div>
       <p className="muted" style={{ marginBottom: 18 }}>
         Mijoz ovozini matnga qaysi xizmat o&apos;giradi. O&apos;zgartirish keyingi qo&apos;ng&apos;iroqdan boshlab darhol qo&apos;llaniladi.
       </p>

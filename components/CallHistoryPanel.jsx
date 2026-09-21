@@ -59,13 +59,6 @@ export default function CallHistoryPanel() {
 
   return (
     <div>
-      <div className="toolbar">
-        <h2 style={{ margin: 0 }}>Qo&apos;ng&apos;iroqlar tarixi</h2>
-      </div>
-      <p className="muted" style={{ marginBottom: 18 }}>
-        Barcha vaqtdagi qo&apos;ng&apos;iroqlar — brauzer va SIP orqali kelganlarning barchasi.
-      </p>
-
       {error && <div className="error-banner">{error}</div>}
 
       {loading ? (
@@ -74,6 +67,7 @@ export default function CallHistoryPanel() {
         <p className="muted">Hozircha qo&apos;ng&apos;iroqlar yo&apos;q.</p>
       ) : (
         <>
+          <div className="table-card">
           <div className="table-scroll">
             <table className="analog-table">
               <thead>
@@ -100,6 +94,7 @@ export default function CallHistoryPanel() {
                 ))}
               </tbody>
             </table>
+          </div>
           </div>
 
           <div className="section" style={{ display: "flex", alignItems: "center", gap: 10 }}>

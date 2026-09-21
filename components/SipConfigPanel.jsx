@@ -73,9 +73,6 @@ export default function SipConfigPanel() {
 
   return (
     <div>
-      <div className="toolbar">
-        <h2 style={{ margin: 0 }}>SIP sozlamalari</h2>
-      </div>
       <p className="muted" style={{ marginBottom: 18 }}>PBX tizimingiz uchun ulanish sozlamalari</p>
 
       <SipStatusBadges />
@@ -86,14 +83,7 @@ export default function SipConfigPanel() {
         <p className="muted">Yuklanmoqda...</p>
       ) : (
         <>
-          <div
-            style={{
-              border: "1px solid var(--border)",
-              borderRadius: 12,
-              padding: 20,
-              marginBottom: 20,
-            }}
-          >
+          <div className="card" style={{ marginBottom: 20 }}>
             <h3 style={{ margin: "0 0 4px" }}>SIP hisob ma&apos;lumotlari</h3>
             <p className="muted" style={{ marginTop: 0, marginBottom: 16, fontSize: "0.85rem" }}>
               Bu hisob ma&apos;lumotlari agentni PBX bilan ro&apos;yxatdan o&apos;tkazish uchun ishlatiladi

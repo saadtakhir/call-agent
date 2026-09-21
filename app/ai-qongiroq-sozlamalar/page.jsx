@@ -1,4 +1,5 @@
-import { Mic, Gauge, Phone, Bot, MessageSquareText } from "lucide-react";
+import { Mic, Gauge, Phone, Bot, MessageSquareText, Settings } from "lucide-react";
+import PageHeader from "@/components/PageHeader";
 import SettingsTabs from "@/components/SettingsTabs";
 import SttProviderPanel from "@/components/SttProviderPanel";
 import SystemPromptPanel from "@/components/SystemPromptPanel";
@@ -53,5 +54,10 @@ const TABS = [
 ];
 
 export default function AiCallSettingsPage() {
-  return <SettingsTabs tabs={TABS} />;
+  return (
+    <div>
+      <PageHeader icon={Settings} title="Sozlamalar" subtitle="AI qo'ng'iroq agenti uchun barcha sozlamalar." />
+      <SettingsTabs tabs={TABS} />
+    </div>
+  );
 }

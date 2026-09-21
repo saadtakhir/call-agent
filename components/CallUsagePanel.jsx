@@ -76,6 +76,27 @@ export default function CallUsagePanel() {
               </div>
             </div>
 
+            {data.totalCostSomPerMinute !== null && (
+              <div
+                style={{
+                  background: "var(--accent-soft)",
+                  borderRadius: 10,
+                  padding: "14px 16px",
+                  marginBottom: 16,
+                }}
+              >
+                <div className="muted" style={{ fontSize: "0.78rem" }}>1 daqiqalik qo&apos;ng&apos;iroqning umumiy taxminiy narxi</div>
+                <div style={{ fontSize: "1.5rem", fontWeight: 700, color: "var(--accent)" }}>
+                  {Math.round(data.totalCostSomPerMinute).toLocaleString()} so&apos;m
+                </div>
+                <div className="muted" style={{ fontSize: "0.78rem" }}>
+                  LLM + TTS + STT ({STT_PROVIDER_LABELS[data.currentSttProvider] || data.currentSttProvider}), $1 ={" "}
+                  {Math.round(data.usdToUzsRate).toLocaleString()} so&apos;m (CBU kursi)
+                  {!data.sttCostKnown && " — STT narxi bu jamiga kirmagan"}
+                </div>
+              </div>
+            )}
+
             <div style={{ borderTop: "1px solid var(--border)", paddingTop: 14 }}>
               <div style={{ fontWeight: 600, marginBottom: 6, fontSize: "0.9rem" }}>Taxminiy xarajat (faqat tasdiqlangan narxlar bo&apos;yicha)</div>
               <p style={{ margin: "0 0 4px" }}>

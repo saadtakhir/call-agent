@@ -115,7 +115,7 @@ export default function ActiveCallsPanel() {
                       <th>Sessiya</th>
                       <th>Kanal</th>
                       <th>Boshlangan</th>
-                      <th>Davomiyligi</th>
+                      <th>Davomiyligi (daq:son)</th>
                       <th></th>
                     </tr>
                   </thead>

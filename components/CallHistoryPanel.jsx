@@ -82,7 +82,7 @@ export default function CallHistoryPanel() {
                   <th>Sana va vaqt</th>
                   <th>Telefon raqam</th>
                   <th>Kanal</th>
-                  <th>Davomiyligi</th>
+                  <th>Davomiyligi (daq:son)</th>
                 </tr>
               </thead>
               <tbody>

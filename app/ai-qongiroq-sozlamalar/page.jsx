@@ -4,6 +4,7 @@ import SttProviderPanel from "@/components/SttProviderPanel";
 import SystemPromptPanel from "@/components/SystemPromptPanel";
 import CannedResponsesPanel from "@/components/CannedResponsesPanel";
 import MaxConcurrentCallsPanel from "@/components/MaxConcurrentCallsPanel";
+import MaxCallDurationPanel from "@/components/MaxCallDurationPanel";
 import SipConfigPanel from "@/components/SipConfigPanel";
 import ProviderUsagePanel from "@/components/ProviderUsagePanel";
 import CallUsagePanel from "@/components/CallUsagePanel";
@@ -23,7 +24,12 @@ const TABS = [
     title: "Chegara",
     subtitle: "Bir vaqtdagi suhbatlar",
     icon: <Gauge size={18} />,
-    content: <MaxConcurrentCallsPanel />,
+    content: (
+      <>
+        <MaxConcurrentCallsPanel />
+        <MaxCallDurationPanel />
+      </>
+    ),
   },
   {
     id: "sip",

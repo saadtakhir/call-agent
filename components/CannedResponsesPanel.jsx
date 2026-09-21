@@ -189,10 +189,10 @@ function CannedResponseRow({ item, saving, generating, onSaveText, onGenerate, o
   return (
     <tr>
       <td style={{ whiteSpace: "nowrap", fontFamily: "monospace" }}>{item.key}</td>
-      <td style={{ minWidth: 260 }}>
+      <td style={{ minWidth: 320 }}>
         <textarea
           className="manage-input"
-          style={{ width: "100%", minHeight: 50, resize: "vertical" }}
+          style={{ width: "100%", minHeight: 76, resize: "vertical" }}
           value={text}
           onChange={(e) => setText(e.target.value)}
         />

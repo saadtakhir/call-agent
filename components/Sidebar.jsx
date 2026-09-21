@@ -3,12 +3,13 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, PhoneCall, Activity, History, Settings, Users, LogOut } from "lucide-react";
+import { Menu, X, PhoneCall, Activity, History, Wallet, Settings, Users, LogOut } from "lucide-react";
 
 const LINKS = [
   { href: "/ai-qongiroq", label: "Suhbat", icon: PhoneCall, permission: "view_call" },
   { href: "/faol-suhbatlar", label: "Faol suhbatlar", icon: Activity, permission: "view_dashboard" },
   { href: "/qongiroqlar-tarixi", label: "Qo'ng'iroqlar tarixi", icon: History, permission: "view_dashboard" },
+  { href: "/xarajatlar", label: "Xarajatlar", icon: Wallet, permission: "manage_settings" },
   { href: "/ai-qongiroq-sozlamalar", label: "Sozlamalar", icon: Settings, permission: "manage_settings" },
   { href: "/foydalanuvchilar", label: "Foydalanuvchilar", icon: Users, permission: "manage_users" },
 ];

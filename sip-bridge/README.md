@@ -1,5 +1,8 @@
 # sip-bridge
 
+Auto-deploy: pushes to this folder redeploy automatically via GitHub
+Actions (see `.github/workflows/deploy-sip-bridge.yml`).
+
 Bridges a FreePBX SIP extension to the existing ai-call-agent AI logic. It
 does for a real phone call what `components/AiCallWidget.jsx` does for a
 browser tab: capture audio, detect turns, call the same

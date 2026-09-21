@@ -30,6 +30,15 @@ const SILENCE_STAGE_MS = 5000;
 // playing a "searching..." filler — see that route's own comments.
 const FILLER_DELAY_MS = 1200;
 
+// See components/AiCallWidget.jsx's identical constant — a caller
+// utterance shorter than this is very likely a brief "rahmat, xayr"/"ha"/
+// "yo'q" rather than a new question, so the generic "question" filler is
+// skipped entirely rather than playing a "let me think" line in front of
+// what's about to be a farewell. Doesn't apply to "confirm" (a short "ha"
+// answering a to'g'rimi? prompt), which always keeps its filler since
+// that's exactly when a real get_property_info search starts.
+const SHORT_UTTERANCE_MS = 1200;
+
 /** Reads a raw little-endian 16-bit PCM buffer into a plain Array<number> —
  * deliberately not a typed-array view over the buffer, since frame payloads
  * sliced out of an incoming TCP chunk can land at an odd byteOffset, which
@@ -214,12 +223,13 @@ export class CallSession {
     if (volume > START_THRESHOLD) this.lastLoudMs = now;
     if (now - this.lastLoudMs > SILENCE_MS) {
       this.isRecording = false;
-      const discard = this.lastLoudMs - this.speechStartMs < MIN_SPEECH_MS;
-      this.finishRecording(discard);
+      const speechDurationMs = this.lastLoudMs - this.speechStartMs;
+      const discard = speechDurationMs < MIN_SPEECH_MS;
+      this.finishRecording(discard, speechDurationMs);
     }
   }
 
-  async finishRecording(discard) {
+  async finishRecording(discard, speechDurationMs) {
     const frames = this.recordedFrames;
     this.recordedFrames = [];
 
@@ -249,8 +259,9 @@ export class CallSession {
       // Mirrors AiCallWidget.jsx: a trailing "to'g'rimi?" means the caller
       // is confirming, which is what actually triggers a property search,
       // worth calling out with a more specific filler than the generic one.
-      if (!settled) {
-        const fillerType = this.lastAiText.trim().endsWith("to'g'rimi?") ? "confirm" : "question";
+      const fillerType = this.lastAiText.trim().endsWith("to'g'rimi?") ? "confirm" : "question";
+      const skipFiller = fillerType === "question" && speechDurationMs < SHORT_UTTERANCE_MS;
+      if (!settled && !skipFiller) {
         await this.playFiller(fillerType);
       }
 

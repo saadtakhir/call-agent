@@ -29,6 +29,16 @@ const SILENCE_STAGE_MS = 5000;
 // slow one. Only turns that are ACTUALLY still running past this get one.
 const FILLER_DELAY_MS = 1200;
 
+// A caller's utterance shorter than this (measured start-of-speech to
+// last-loud-moment) is very likely a brief "rahmat, xayr"/"ha"/"yo'q"
+// rather than a new question — a "let me think/search" filler in front of
+// what's about to be a short farewell reply reads as an odd non-sequitur.
+// Only gates the generic "question" filler; "confirm" (a short "ha"
+// answering a to'g'rimi? prompt) always keeps its filler regardless of
+// length, since that's exactly when a real get_property_info search
+// actually starts.
+const SHORT_UTTERANCE_MS = 1200;
+
 // Raw PCM capture (via ScriptProcessorNode) instead of MediaRecorder — a
 // MediaRecorder.start() called exactly when the threshold is crossed loses
 // the first ~100-300ms of audio to encoder startup latency, which in
@@ -383,13 +393,14 @@ export default function AiCallWidget() {
     if (volume > START_THRESHOLD) lastLoudRef.current = now;
     if (now - lastLoudRef.current > SILENCE_MS) {
       isRecordingRef.current = false;
-      const discard = lastLoudRef.current - speechStartRef.current < MIN_SPEECH_MS;
+      const speechDurationMs = lastLoudRef.current - speechStartRef.current;
+      const discard = speechDurationMs < MIN_SPEECH_MS;
       setPhase("processing");
-      finishRecording(discard);
+      finishRecording(discard, speechDurationMs);
     }
   }
 
-  async function finishRecording(discard) {
+  async function finishRecording(discard, speechDurationMs) {
     const chunks = recordedChunksRef.current;
     recordedChunksRef.current = [];
     const totalLength = chunks.reduce((sum, c) => sum + c.length, 0);
@@ -435,7 +446,12 @@ export default function AiCallWidget() {
       // section 4), so that's the moment worth a "qidiryapman" filler
       // instead of the plain generic one.
       const fillerType = lastAiTextRef.current.trim().endsWith("to'g'rimi?") ? "confirm" : "question";
-      const variants = fillerRef.current[fillerType];
+      // A short "question"-type utterance is very likely a brief "rahmat,
+      // xayr" — see SHORT_UTTERANCE_MS's doc comment for why that skips
+      // the filler entirely rather than playing a "let me think" line in
+      // front of what's about to be a farewell.
+      const skipFiller = fillerType === "question" && speechDurationMs < SHORT_UTTERANCE_MS;
+      const variants = skipFiller ? [] : fillerRef.current[fillerType];
       const filler = variants.length ? variants[fillerIndexRef.current[fillerType] % variants.length] : null;
       if (filler) fillerIndexRef.current[fillerType] += 1;
       if (!turnSettled && filler) {

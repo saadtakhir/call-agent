@@ -584,6 +584,69 @@ a {
   color: var(--muted);
 }
 
+/* --- selectable option cards (e.g. SttProviderPanel) — a radio-style
+   pick-one list, each with its own description, distinct from a plain
+   tab-toggle since there's more to read than just a short label. Clicking
+   only updates local selection; a separate "Saqlash" button commits it. */
+.stt-option-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.stt-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.stt-option:hover {
+  border-color: var(--accent);
+}
+.stt-option.selected {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+}
+.stt-option-radio {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  border-radius: 999px;
+  border: 2px solid var(--border);
+  background: var(--card);
+  color: #fff;
+}
+.stt-option.selected .stt-option-radio {
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.stt-option-body {
+  min-width: 0;
+}
+.stt-option-label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.92rem;
+  margin-bottom: 4px;
+}
+.stt-option-desc {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
 /* --- settings vertical tabs --- */
 .settings-tabs {
   display: flex;

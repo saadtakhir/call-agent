@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { Menu, X, PhoneCall, Activity, History, Wallet, Settings, Users, LogOut } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
+import ExchangeRateBadge from "./ExchangeRateBadge";
 
 const LINKS = [
   { href: "/ai-qongiroq", label: "Suhbat", icon: PhoneCall, permission: "view_call" },
@@ -59,6 +60,7 @@ export default function Sidebar({ user }) {
             <X size={18} />
           </button>
         </div>
+        <ExchangeRateBadge />
         <nav className="sidebar-nav">
           {links.map(({ href, label, icon: Icon }) => (
             <Link key={href} href={href} className={pathname === href ? "active" : ""} onClick={() => setOpen(false)}>

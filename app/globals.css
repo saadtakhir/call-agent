@@ -246,6 +246,42 @@ a {
   font-weight: 700;
   font-size: 1.02rem;
 }
+.exchange-rate-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  margin: 0 4px 16px;
+  background: var(--accent-soft);
+  border-radius: 10px;
+}
+.exchange-rate-badge-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: 9px;
+  background: var(--accent);
+  color: #fff;
+}
+.exchange-rate-badge-text {
+  min-width: 0;
+}
+.exchange-rate-badge-label {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.exchange-rate-badge-value {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--text);
+  font-variant-numeric: tabular-nums;
+}
 .sidebar-nav {
   display: flex;
   flex-direction: column;

@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { tryStartCall, endCallSession, getMaxConcurrentCalls } from "@/lib/aiCallCapacity";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { getClientIp } from "@/lib/loginAttempts";
+import { getSessionUser, SESSION_COOKIE_NAME } from "@/lib/auth";
 
 export const maxDuration = 10;
 
@@ -22,9 +23,13 @@ export async function GET(request) {
   const sessionId = request.nextUrl.searchParams.get("sessionId");
   if (!sessionId) return NextResponse.json({ error: "\"sessionId\" kerak." }, { status: 400 });
   const channel = request.nextUrl.searchParams.get("channel") === "sip" ? "sip" : "widget";
+  // Whoever's session cookie made this request — proxy.js already
+  // guarantees one exists (this route requires view_call), so this is
+  // just reading back the same user, not a separate auth check.
+  const actingUser = getSessionUser(request.cookies.get(SESSION_COOKIE_NAME)?.value);
 
   try {
-    const started = await tryStartCall(sessionId, channel);
+    const started = await tryStartCall(sessionId, channel, actingUser?.username || null);
     if (!started) {
       const max = await getMaxConcurrentCalls();
       return NextResponse.json(

@@ -99,6 +99,7 @@ export default function CallHistoryPanel() {
                   <th>Sana va vaqt</th>
                   <th>Telefon raqam</th>
                   <th>Kanal</th>
+                  <th>Foydalanuvchi</th>
                   <th>Davomiyligi (daq:son)</th>
                   <th></th>
                 </tr>
@@ -110,6 +111,7 @@ export default function CallHistoryPanel() {
                     <td>{formatDateTime(call.createdAt)}</td>
                     <td>{call.callerNumber || <span className="muted">Noma&apos;lum</span>}</td>
                     <td>{CHANNEL_LABELS[call.channel] || call.channel}</td>
+                    <td>{call.startedByUsername || <span className="muted">—</span>}</td>
                     <td style={{ fontVariantNumeric: "tabular-nums" }}>
                       {formatDuration(call.durationSeconds)}
                       {call.active && <span className="muted"> (davom etmoqda)</span>}

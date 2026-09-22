@@ -73,6 +73,14 @@ model AiCallSession {
   // page's "Kanal" column.
   channel String @default("widget")
 
+  // Whichever logged-in account's session cookie hit /api/ai-call/start —
+  // for "widget" calls this is the real staff member who clicked
+  // "Qo'ng'iroqni boshlash"; for "sip" calls it's just sip-bridge's own
+  // service-account login (see sip-bridge/README.md), so it never
+  // identifies the actual caller on a real phone call. Null for any row
+  // created before this column existed.
+  startedByUsername String?
+
   // Only ever populated for "sip" calls, and only once the Asterisk
   // dialplan is extended to actually pass CALLERID(num) through — nothing
   // in the current AudioSocket integration captures it yet, so this stays

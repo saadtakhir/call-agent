@@ -37,6 +37,7 @@ const PATH_PERMISSIONS = [
   { prefix: "/ai-qongiroq-sozlamalar", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/provider-usage", permission: PERMISSIONS.VIEW_COSTS },
   { prefix: "/api/ai-call/call-usage", permission: PERMISSIONS.VIEW_COSTS },
+  { prefix: "/api/ai-call/telegram-usage", permission: PERMISSIONS.VIEW_COSTS },
   { prefix: "/xarajatlar", permission: PERMISSIONS.VIEW_COSTS },
   { prefix: "/api/ai-call/call-history", permission: PERMISSIONS.VIEW_CALL_HISTORY },
   { prefix: "/qongiroqlar-tarixi", permission: PERMISSIONS.VIEW_CALL_HISTORY },

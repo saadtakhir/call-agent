@@ -39,8 +39,8 @@ export default function CallUsagePanel() {
     <div className="section">
       <div style={{ fontWeight: 600, marginBottom: 8 }}>Bizning qo&apos;ng&apos;iroqlarimiz (barcha vaqt)</div>
       <p className="muted" style={{ marginTop: 0, marginBottom: 12, fontSize: "0.85rem" }}>
-        Har bir qo&apos;ng&apos;iroqda haqiqatda ishlatilgan STT/LLM/TTS miqdori — faqat shu ilova orqali
-        o&apos;tgan qo&apos;ng&apos;iroqlar.
+        Har bir qo&apos;ng&apos;iroqda haqiqatda ishlatilgan STT/LLM/TTS miqdori — faqat ovozli qo&apos;ng&apos;iroqlar
+        (brauzer/SIP). Telegram bot xarajati pastda alohida ko&apos;rsatilgan (u STT/TTS ishlatmaydi).
       </p>
 
       {error && <div className="error-banner">{error}</div>}

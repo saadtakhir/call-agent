@@ -25,7 +25,7 @@ function formatDuration(totalSeconds) {
   return `${m}:${String(s).padStart(2, "0")}`;
 }
 
-const CHANNEL_LABELS = { widget: "Brauzer", sip: "SIP" };
+const CHANNEL_LABELS = { widget: "Brauzer", sip: "SIP", telegram: "Telegram" };
 
 /** All calls this app has ever handled (see lib/aiCallCapacity.js's
  * listCallHistory) — distinct from ActiveCallsPanel, which only shows

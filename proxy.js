@@ -8,7 +8,10 @@ import { getSessionUser, hasPermission, PERMISSIONS, SESSION_COOKIE_NAME } from 
 // uses node:crypto and the pg driver — not available on the old Edge-only
 // runtime.
 const PUBLIC_PAGE_PATHS = ["/login"];
-const PUBLIC_API_PATHS = ["/api/login"];
+// Telegram's own servers call /api/telegram/webhook directly — no session
+// cookie is possible there, so it's protected instead by its own secret-
+// token check inside the route (see app/api/telegram/webhook/route.js).
+const PUBLIC_API_PATHS = ["/api/login", "/api/telegram/webhook"];
 // PWA install-ability assets — the browser/OS can probe these (manifest,
 // icons, the service worker script) before there's any session at all,
 // e.g. while sitting on /login, so they can't require auth like everything

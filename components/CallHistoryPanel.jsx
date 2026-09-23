@@ -26,6 +26,12 @@ function formatDuration(totalSeconds) {
 }
 
 const CHANNEL_LABELS = { widget: "Brauzer", sip: "SIP", telegram: "Telegram" };
+const CHANNEL_FILTERS = [
+  { key: "", label: "Barchasi" },
+  { key: "widget", label: "Brauzer" },
+  { key: "sip", label: "SIP" },
+  { key: "telegram", label: "Telegram" },
+];
 
 /** All calls this app has ever handled (see lib/aiCallCapacity.js's
  * listCallHistory) — distinct from ActiveCallsPanel, which only shows
@@ -37,6 +43,7 @@ export default function CallHistoryPanel() {
   const { confirm, dialog } = useConfirm();
   const [data, setData] = useState(null);
   const [page, setPage] = useState(1);
+  const [channel, setChannel] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [deletingId, setDeletingId] = useState("");
@@ -46,7 +53,8 @@ export default function CallHistoryPanel() {
       setLoading(true);
       setError("");
       try {
-        const res = await fetch(`/api/ai-call/call-history?page=${page}`);
+        const query = channel ? `&channel=${channel}` : "";
+        const res = await fetch(`/api/ai-call/call-history?page=${page}${query}`);
         const json = await res.json();
         if (!res.ok) throw new Error(json.error || "Xatolik");
         setData(json);
@@ -56,7 +64,12 @@ export default function CallHistoryPanel() {
         setLoading(false);
       }
     })();
-  }, [page]);
+  }, [page, channel]);
+
+  function chooseChannel(key) {
+    setChannel(key);
+    setPage(1);
+  }
 
   async function removeCall(call) {
     if (!(await confirm(`${formatDateTime(call.createdAt)} qo'ng'iroqni tarixdan o'chirishni tasdiqlaysizmi?`))) return;
@@ -83,6 +96,16 @@ export default function CallHistoryPanel() {
   return (
     <div>
       {error && <div className="error-banner">{error}</div>}
+
+      {data?.counts && (
+        <div className="tab-toggle" style={{ width: "fit-content", marginBottom: 18 }}>
+          {CHANNEL_FILTERS.map((f) => (
+            <button key={f.key} className={channel === f.key ? "active" : ""} onClick={() => chooseChannel(f.key)}>
+              {f.label} {f.key ? `(${data.counts[f.key] ?? 0})` : `(${data.counts.widget + data.counts.sip + data.counts.telegram})`}
+            </button>
+          ))}
+        </div>
+      )}
 
       {loading ? (
         <p className="muted">Yuklanmoqda...</p>

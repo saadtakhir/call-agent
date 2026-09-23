@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import { listCallHistory, deleteCallSession } from "@/lib/aiCallCapacity";
 
+const VALID_CHANNELS = ["widget", "sip", "telegram"];
+
 export async function GET(request) {
   const page = Math.max(1, Number(request.nextUrl.searchParams.get("page")) || 1);
-  const result = await listCallHistory({ page, pageSize: 50 });
+  const channelParam = request.nextUrl.searchParams.get("channel");
+  const channel = VALID_CHANNELS.includes(channelParam) ? channelParam : null;
+  const result = await listCallHistory({ page, pageSize: 50, channel });
   return NextResponse.json(result);
 }
 

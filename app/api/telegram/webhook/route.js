@@ -24,7 +24,7 @@ const WINDOW_MS = 5 * 60 * 1000;
  * browser request the way a cookie or Origin header sometimes can be. */
 function isFromTelegram(request) {
   const secret = request.headers.get("x-telegram-bot-api-secret-token");
-  return Boolean(config.telegram.webhookSecret) && secret === config.telegram.webhookSecret;
+  return Boolean(config.telegramSupportBot.webhookSecret) && secret === config.telegramSupportBot.webhookSecret;
 }
 
 /** Text-only support channel, reusing the exact same agent as voice calls

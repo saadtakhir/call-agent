@@ -30,7 +30,7 @@ export default function SipStatusBadges() {
     setReconnecting(true);
     try {
       await fetch("/api/ai-call/sip-reconnect", { method: "POST" });
-      // The bridge only picks this up on its NEXT heartbeat (up to ~30s),
+      // The bridge only picks this up on its NEXT heartbeat (up to ~120s),
       // then reloading pjsip itself takes a moment — this just gives the
       // button a brief, clearly-finite "working" state rather than
       // pretending to know the moment it actually took effect.

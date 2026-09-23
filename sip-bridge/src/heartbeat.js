@@ -1,6 +1,14 @@
 import { getPbxRegistrationStatus, reloadPjsip } from "./asteriskStatus.js";
 
-const HEARTBEAT_INTERVAL_MS = 30_000;
+// Was 30s — the very thing this heartbeat exists to do (prove the bridge
+// is alive, hand it commands) still works fine at this slower pace, and
+// it was by far the single biggest contributor to this app's Vercel
+// function-invocation/CPU usage (a heartbeat firing every 30s, all day,
+// every day, against every other route combined). See STALE_AFTER_MS in
+// lib/sipStatus.js, which had to grow along with this — it's derived from
+// this same interval (missing "a couple in a row" before flagging
+// offline), not an independent number.
+const HEARTBEAT_INTERVAL_MS = 120_000;
 
 /** Periodically tells the app "the bridge process is alive and reachable",
  * how many calls it's currently bridging, and whether Asterisk is actually

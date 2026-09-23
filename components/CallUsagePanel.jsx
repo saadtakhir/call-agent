@@ -115,13 +115,20 @@ export default function CallUsagePanel() {
                 STT ({STT_PROVIDER_LABELS[data.currentSttProvider] || data.currentSttProvider}):{" "}
                 {data.sttCostKnown ? (
                   <>
-                    <strong>{Math.round(data.sttCostSom).toLocaleString()} so&apos;m</strong>
+                    <strong>
+                      {data.sttCostSom !== null
+                        ? `${Math.round(data.sttCostSom).toLocaleString()} so'm`
+                        : `$${data.sttCostUsd.toFixed(4)}`}
+                    </strong>
                     {data.sttCostSomPerMinute !== null && (
                       <span className="muted"> (1 daqiqada {Math.round(data.sttCostSomPerMinute).toLocaleString()} so&apos;m)</span>
                     )}
+                    {data.sttCostUsdPerMinute !== null && (
+                      <span className="muted"> (1 daqiqada ${data.sttCostUsdPerMinute.toFixed(4)})</span>
+                    )}
                   </>
                 ) : (
-                  <span className="muted">narxi tasdiqlanmagan (faqat Muxlisa uchun narx tasdiqlangan)</span>
+                  <span className="muted">narxi tasdiqlanmagan</span>
                 )}
               </p>
               {data.callCount > 0 && (

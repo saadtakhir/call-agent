@@ -1,4 +1,4 @@
-import { Mic, Gauge, Phone, Bot, MessageSquareText, Settings } from "lucide-react";
+import { Mic, Gauge, Phone, Bot, MessageSquareText, Settings, Send } from "lucide-react";
 import PageHeader from "@/components/PageHeader";
 import SettingsTabs from "@/components/SettingsTabs";
 import SttProviderPanel from "@/components/SttProviderPanel";
@@ -7,6 +7,7 @@ import CannedResponsesPanel from "@/components/CannedResponsesPanel";
 import MaxConcurrentCallsPanel from "@/components/MaxConcurrentCallsPanel";
 import MaxCallDurationPanel from "@/components/MaxCallDurationPanel";
 import SipConfigPanel from "@/components/SipConfigPanel";
+import TelegramConfigPanel from "@/components/TelegramConfigPanel";
 
 export const metadata = { title: "AI qo'ng'iroq sozlamalari | E-Content" };
 
@@ -36,6 +37,13 @@ const TABS = [
     subtitle: "PBX ulanishi",
     icon: <Phone size={18} />,
     content: <SipConfigPanel />,
+  },
+  {
+    id: "telegram",
+    title: "Telegram",
+    subtitle: "Support bot",
+    icon: <Send size={18} />,
+    content: <TelegramConfigPanel />,
   },
   {
     id: "prompt",

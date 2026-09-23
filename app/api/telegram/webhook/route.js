@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { config } from "@/lib/config";
 import { prisma } from "@/lib/prisma";
 import { runAgentTurn } from "@/lib/aiCallAgent";
+import { CALL_GREETING_TEXT } from "@/lib/aiCallService";
 import { recordCallUsage } from "@/lib/callUsage";
 import { sendTelegramMessage } from "@/lib/telegramService";
 import { checkRateLimit } from "@/lib/rateLimit";
@@ -14,6 +15,15 @@ export const maxDuration = 60;
 // instead since there's no meaningful "IP" for a Telegram user here.
 const MAX_MESSAGES_PER_WINDOW = 20;
 const WINDOW_MS = 5 * 60 * 1000;
+
+// A chat left untouched this long starts fresh on its next message rather
+// than dragging in days-old context forever — OpenAI's own conversation
+// chaining (previous_response_id) has no expiry of its own, so without
+// this a months-old thread would just keep growing (and stop making sense
+// to "continue" anyway).
+const STALE_CONVERSATION_MS = 3 * 24 * 60 * 60 * 1000;
+
+const RESET_REPLY_TEXT = "Suhbat tozalandi. Yangidan boshlaymiz — qanday yordam bera olaman?";
 
 /** Telegram's own servers call this — never a browser, never with our
  * session cookie — so it can't go through the normal login check every
@@ -64,11 +74,29 @@ export async function POST(request) {
   }
 
   const sessionId = `telegram-${chatId}`;
-  try {
+
+  // /start and /reset never reach the agent at all — a fixed reply (the
+  // same opener the phone call plays, CALL_GREETING_TEXT, for /start) that
+  // also clears lastResponseId, so either command is a clean way to drop
+  // whatever context OpenAI has chained onto this chat so far.
+  if (text === "/start" || text === "/reset") {
     await prisma.aiCallSession.upsert({
       where: { sessionId },
       create: { sessionId, active: false, channel: "telegram" },
-      update: {},
+      update: { lastResponseId: null },
+    });
+    await sendTelegramMessage(chatId, text === "/start" ? CALL_GREETING_TEXT : RESET_REPLY_TEXT).catch(() => {});
+    return NextResponse.json({ ok: true });
+  }
+
+  try {
+    const existing = await prisma.aiCallSession.findUnique({ where: { sessionId }, select: { updatedAt: true } });
+    const isStale = existing && Date.now() - existing.updatedAt.getTime() > STALE_CONVERSATION_MS;
+
+    await prisma.aiCallSession.upsert({
+      where: { sessionId },
+      create: { sessionId, active: false, channel: "telegram" },
+      update: isStale ? { lastResponseId: null } : {},
     });
 
     const { reply, usage } = await runAgentTurn({ sessionId, transcript: text });

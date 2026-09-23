@@ -34,6 +34,10 @@ const PATH_PERMISSIONS = [
   { prefix: "/api/ai-call/sip-config", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/sip-status", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/sip-reconnect", permission: PERMISSIONS.MANAGE_SETTINGS },
+  // /api/telegram/webhook is public (see PUBLIC_API_PATHS above, checked
+  // before this list) — that early return means this broader prefix only
+  // ever matches /status and /setup-webhook in practice.
+  { prefix: "/api/telegram", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/ai-qongiroq-sozlamalar", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/provider-usage", permission: PERMISSIONS.VIEW_COSTS },
   { prefix: "/api/ai-call/call-usage", permission: PERMISSIONS.VIEW_COSTS },

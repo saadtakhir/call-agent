@@ -81,10 +81,12 @@ model AiCallSession {
   // created before this column existed.
   startedByUsername String?
 
-  // Only ever populated for "sip" calls, and only once the Asterisk
-  // dialplan is extended to actually pass CALLERID(num) through — nothing
-  // in the current AudioSocket integration captures it yet, so this stays
-  // null for now (shown as "Noma'lum" in the history table).
+  // Populated for "sip" calls — the dialplan packs CALLERID(num) in front
+  // of AudioSocket's own "uuid" argument (see sip-bridge/README.md's
+  // dialplan snippet and callSession.js's handleFrame), since that field
+  // is just an opaque string Asterisk hands back verbatim, never actually
+  // parsed as a real UUID. Null for any row from before this existed, or
+  // if the caller's number itself was withheld/unavailable.
   callerNumber String?
 
   // Set by the "Tugatish" button on Faol suhbatlar (see

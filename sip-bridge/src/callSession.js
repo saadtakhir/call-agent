@@ -72,6 +72,7 @@ export class CallSession {
 
     this.sessionId = null;
     this.asteriskCallId = null;
+    this.callerNumber = null;
     this.ended = false;
 
     this.armed = false;
@@ -102,7 +103,21 @@ export class CallSession {
   handleFrame(type, payload) {
     if (this.ended) return;
     if (type === FRAME_TYPES.UUID) {
-      this.asteriskCallId = payload.toString("hex");
+      // AudioSocket's "uuid" argument is just an opaque string Asterisk
+      // hands back verbatim as this frame's payload — never actually
+      // parsed/validated as a real UUID (this app doesn't even use it as
+      // the session id; see start() below) — so the dialplan packs the
+      // caller's own number in front of it, `_`-separated (see
+      // sip-bridge/README.md's dialplan snippet), rather than needing a
+      // separate AMI connection just to look up CALLERID(num).
+      const raw = payload.toString("utf8");
+      const separatorIndex = raw.indexOf("_");
+      if (separatorIndex === -1) {
+        this.asteriskCallId = raw;
+      } else {
+        this.callerNumber = raw.slice(0, separatorIndex) || null;
+        this.asteriskCallId = raw.slice(separatorIndex + 1);
+      }
       this.start();
     } else if (type === FRAME_TYPES.AUDIO) {
       this.handleAudioFrame(payload);
@@ -125,9 +140,13 @@ export class CallSession {
    * frame confirms the channel is up. */
   async start() {
     this.sessionId = randomUUID();
-    console.log(`[sip-bridge] call starting: session=${this.sessionId} asterisk=${this.asteriskCallId}`);
+    console.log(
+      `[sip-bridge] call starting: session=${this.sessionId} asterisk=${this.asteriskCallId} caller=${this.callerNumber || "noma'lum"}`
+    );
     try {
-      const res = await this.authClient.apiFetch(`/api/ai-call/start?sessionId=${this.sessionId}&channel=sip`);
+      const params = new URLSearchParams({ sessionId: this.sessionId, channel: "sip" });
+      if (this.callerNumber) params.set("callerNumber", this.callerNumber);
+      const res = await this.authClient.apiFetch(`/api/ai-call/start?${params}`);
       if (!res.ok) {
         // No generic "speak this text" endpoint exists outside an active
         // session, so a caller hitting capacity just hears nothing before

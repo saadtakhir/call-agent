@@ -23,13 +23,18 @@ export async function GET(request) {
   const sessionId = request.nextUrl.searchParams.get("sessionId");
   if (!sessionId) return NextResponse.json({ error: "\"sessionId\" kerak." }, { status: 400 });
   const channel = request.nextUrl.searchParams.get("channel") === "sip" ? "sip" : "widget";
+  // Only ever sent by sip-bridge (see its callSession.js), which reads it
+  // straight off the dialplan's own AudioSocket() argument — see
+  // sip-bridge/README.md's dialplan snippet for how CALLERID(num) gets
+  // packed in there in the first place.
+  const callerNumber = request.nextUrl.searchParams.get("callerNumber") || null;
   // Whoever's session cookie made this request — proxy.js already
   // guarantees one exists (this route requires view_call), so this is
   // just reading back the same user, not a separate auth check.
   const actingUser = getSessionUser(request.cookies.get(SESSION_COOKIE_NAME)?.value);
 
   try {
-    const started = await tryStartCall(sessionId, channel, actingUser?.username || null);
+    const started = await tryStartCall(sessionId, channel, actingUser?.username || null, callerNumber);
     if (!started) {
       const max = await getMaxConcurrentCalls();
       return NextResponse.json(

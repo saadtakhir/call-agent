@@ -84,9 +84,16 @@ and hand them straight to AudioSocket on this service's local port
 [from-pbx]
 exten => <extension>,1,NoOp(AI call agent)
  same => n,Answer()
- same => n,AudioSocket(${UNIQUEID},127.0.0.1:8090)
+ same => n,AudioSocket(${CALLERID(num)}_${UNIQUEID},127.0.0.1:8090)
  same => n,Hangup()
 ```
+
+AudioSocket's "uuid" argument is never actually parsed/validated as a real
+UUID by this app — see `callSession.js`'s `handleFrame` — so the caller's
+own number rides along in front of it, `_`-separated, giving the app the
+caller's phone number (shown on Qo'ng'iroqlar tarixi) with no extra AMI
+connection or lookup needed. If upgrading from an older `AudioSocket(${UNIQUEID},...)`
+line, just replace it with the one above.
 
 Reload both files:
 

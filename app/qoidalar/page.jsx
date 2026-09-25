@@ -4,9 +4,8 @@ import RulesPanel from "@/components/RulesPanel";
 
 export const metadata = { title: "Qoidalar | E-Content" };
 
-// Read-only reference — see lib/rulesCatalog.js. No permission entry in
-// proxy.js's PATH_PERMISSIONS on purpose: it changes nothing and reveals no
-// data, so any signed-in user may open it.
+// Read-only reference — see lib/rulesCatalog.js. Gated by the view_rules
+// permission (proxy.js), assigned per user on the Foydalanuvchilar page.
 export default function RulesPage() {
   return (
     <div>

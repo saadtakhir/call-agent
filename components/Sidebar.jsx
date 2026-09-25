@@ -12,8 +12,7 @@ const LINKS = [
   { href: "/faol-suhbatlar", label: "Faol suhbatlar", icon: Activity, permission: "view_dashboard" },
   { href: "/qongiroqlar-tarixi", label: "Qo'ng'iroqlar tarixi", icon: History, permission: "view_call_history" },
   { href: "/xarajatlar", label: "Xarajatlar", icon: Wallet, permission: "view_costs" },
-  // No permission: a read-only reference open to any signed-in user.
-  { href: "/qoidalar", label: "Qoidalar", icon: BookOpenText, permission: null },
+  { href: "/qoidalar", label: "Qoidalar", icon: BookOpenText, permission: "view_rules" },
   { href: "/ai-qongiroq-sozlamalar", label: "Sozlamalar", icon: Settings, permission: "manage_settings" },
   { href: "/foydalanuvchilar", label: "Foydalanuvchilar", icon: Users, permission: "manage_users" },
 ];

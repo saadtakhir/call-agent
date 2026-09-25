@@ -44,6 +44,7 @@ const PATH_PERMISSIONS = [
   { prefix: "/api/ai-call/call-usage", permission: PERMISSIONS.VIEW_COSTS },
   { prefix: "/api/ai-call/telegram-usage", permission: PERMISSIONS.VIEW_COSTS },
   { prefix: "/xarajatlar", permission: PERMISSIONS.VIEW_COSTS },
+  { prefix: "/qoidalar", permission: PERMISSIONS.VIEW_RULES },
   { prefix: "/api/ai-call/call-history", permission: PERMISSIONS.VIEW_CALL_HISTORY },
   { prefix: "/qongiroqlar-tarixi", permission: PERMISSIONS.VIEW_CALL_HISTORY },
   { prefix: "/api/ai-call/active-sessions", permission: PERMISSIONS.VIEW_DASHBOARD },
@@ -59,7 +60,12 @@ function isPublic(pathname) {
   return PUBLIC_API_PATHS.some((p) => pathname === p || pathname.startsWith(`${p}/`));
 }
 
-function permissionForPath(pathname) {
+function permissionForPath(pathname, method) {
+  // Deleting a history row needs its own permission, not just the one that
+  // lets you view the list (same URL, different method).
+  if (method === "DELETE" && (pathname === "/api/ai-call/call-history" || pathname.startsWith("/api/ai-call/call-history/"))) {
+    return PERMISSIONS.DELETE_CALL_HISTORY;
+  }
   const match = PATH_PERMISSIONS.find((p) => pathname === p.prefix || pathname.startsWith(`${p.prefix}/`));
   return match?.permission || null;
 }
@@ -92,6 +98,7 @@ function firstAccessiblePath(user) {
   if (hasPermission(user, PERMISSIONS.VIEW_DASHBOARD)) return "/faol-suhbatlar";
   if (hasPermission(user, PERMISSIONS.VIEW_CALL_HISTORY)) return "/qongiroqlar-tarixi";
   if (hasPermission(user, PERMISSIONS.VIEW_COSTS)) return "/xarajatlar";
+  if (hasPermission(user, PERMISSIONS.VIEW_RULES)) return "/qoidalar";
   if (hasPermission(user, PERMISSIONS.MANAGE_SETTINGS)) return "/ai-qongiroq-sozlamalar";
   if (hasPermission(user, PERMISSIONS.MANAGE_USERS)) return "/foydalanuvchilar";
   return null;
@@ -165,7 +172,7 @@ export function proxy(request) {
     return withCsp(NextResponse.redirect(url), nonce, csp);
   }
 
-  const requiredPermission = permissionForPath(pathname);
+  const requiredPermission = permissionForPath(pathname, request.method);
   if (requiredPermission && !hasPermission(user, requiredPermission)) {
     if (isApi) return withCsp(NextResponse.json({ error: "Bu amal uchun ruxsatingiz yo'q." }, { status: 403 }), nonce, csp);
     const url = request.nextUrl.clone();

@@ -39,7 +39,7 @@ const CHANNEL_FILTERS = [
  * call until the Asterisk dialplan is extended to actually pass
  * CALLERID(num) through the AudioSocket integration; nothing captures it
  * yet. */
-export default function CallHistoryPanel() {
+export default function CallHistoryPanel({ canDelete = false }) {
   const { confirm, dialog } = useConfirm();
   const [data, setData] = useState(null);
   const [page, setPage] = useState(1);
@@ -140,7 +140,7 @@ export default function CallHistoryPanel() {
                       {call.active && <span className="muted"> (davom etmoqda)</span>}
                     </td>
                     <td>
-                      {!call.active && (
+                      {canDelete && !call.active && (
                         <button
                           className="btn btn-danger btn-icon"
                           onClick={() => removeCall(call)}

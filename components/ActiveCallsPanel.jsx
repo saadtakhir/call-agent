@@ -1,9 +1,17 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
 import { PhoneOff } from "lucide-react";
+import { SUPABASE_URL, SUPABASE_ANON_KEY, ACTIVE_SESSIONS_CHANNEL, ACTIVE_SESSIONS_EVENT } from "@/lib/supabasePublicConfig";
 
-const POLL_MS = 5000;
+const supabase = SUPABASE_URL && SUPABASE_ANON_KEY ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
+
+// Slow safety-net refetch only — the list itself updates instantly via the
+// Supabase Realtime broadcast below whenever a call starts or ends. This
+// still matters for the one change no event announces: a call going stale
+// (untouched past lib/aiCallCapacity.js's STALE_MS) just by time passing.
+const FALLBACK_POLL_MS = 60000;
 
 function formatDuration(totalSeconds) {
   const m = Math.floor(totalSeconds / 60);
@@ -56,11 +64,18 @@ export default function ActiveCallsPanel() {
       }
     }
     load();
-    pollRef.current = setInterval(load, POLL_MS);
+    pollRef.current = setInterval(load, FALLBACK_POLL_MS);
     tickRef.current = setInterval(() => setNow(Date.now()), 1000);
+    const channel = supabase
+      ? supabase
+          .channel(ACTIVE_SESSIONS_CHANNEL)
+          .on("broadcast", { event: ACTIVE_SESSIONS_EVENT }, () => load())
+          .subscribe()
+      : null;
     return () => {
       clearInterval(pollRef.current);
       clearInterval(tickRef.current);
+      if (channel) supabase.removeChannel(channel);
     };
   }, []);
 
@@ -69,10 +84,9 @@ export default function ActiveCallsPanel() {
     try {
       await fetch(`/api/ai-call/hangup?sessionId=${encodeURIComponent(sessionId)}`, { method: "POST" });
       // Not refetching here — the widget/sip-bridge hasn't actually acted
-      // on the flag yet at this point (that takes up to a few more
-      // seconds on its own end), so an immediate reload would just show
-      // the same still-active row. The next scheduled poll above picks up
-      // the real change once it happens.
+      // on the hangup yet at this point, so an immediate reload would just
+      // show the same still-active row. Once it does hang up, /end
+      // broadcasts a change and the subscription above refetches.
     } catch (err) {
       setError(err.message);
     } finally {
@@ -85,7 +99,7 @@ export default function ActiveCallsPanel() {
   return (
     <div>
       <p className="muted" style={{ marginBottom: 18 }}>
-        Har {POLL_MS / 1000} soniyada yangilanadi.
+        Qo&apos;ng&apos;iroq boshlanganda yoki tugaganda darhol yangilanadi.
       </p>
 
       {error && <div className="error-banner">{error}</div>}

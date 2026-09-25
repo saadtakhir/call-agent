@@ -61,7 +61,7 @@ const PRE_ROLL_CHUNKS = 4; // ~350ms at a 48kHz native sample rate
 const PHASE_LABELS = {
   idle: "Tugallandi",
   queued: "Navbatda kutilmoqda...",
-  connecting: "Mikrofon so'ralmoqda...",
+  connecting: "Ulanmoqda...",
   listening: "Tinglayapman...",
   recording: "Eshityapman...",
   processing: "O'ylab ko'ryapman...",
@@ -167,6 +167,7 @@ export default function AiCallWidget() {
   // isHangupRequested).
   const hangupCheckIntervalRef = useRef(null);
   const hangupChannelRef = useRef(null);
+  const greetingPrefetchRef = useRef(null); // Promise<Response|null> started at call start, see startCall
 
   // Full-call recording: both the mic (via the same graph the VAD already
   // uses) and every played AI reply are routed into one shared
@@ -351,7 +352,13 @@ export default function AiCallWidget() {
    * caller had said it, and never goes through STT/the agent at all. */
   async function playGreeting() {
     try {
-      const res = await fetch("/api/ai-call/greeting");
+      // Normally already downloaded by now — startCall kicks this fetch off
+      // in parallel with the capacity check and mic permission instead of
+      // after them, since the greeting doesn't depend on either. Falls back
+      // to a fresh fetch if that prefetch failed.
+      const prefetched = greetingPrefetchRef.current;
+      greetingPrefetchRef.current = null;
+      const res = (prefetched && (await prefetched)) || (await fetch("/api/ai-call/greeting"));
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || `Xatolik (${res.status})`);
@@ -510,6 +517,9 @@ export default function AiCallWidget() {
     setError("");
     setLog([]);
     setPhase("connecting");
+    // Resolves to null (never rejects) so an abandoned prefetch — capacity
+    // full, call cancelled — can't surface as an unhandled rejection.
+    greetingPrefetchRef.current = fetch("/api/ai-call/greeting").catch(() => null);
     if (recordingUrl) URL.revokeObjectURL(recordingUrl);
     setRecordingUrl(null);
 

@@ -337,11 +337,13 @@ const CHECKS = [
   { target: "property", title: "Mulklar API (uy-joy.uz)", hint: "get_property_info shu manzildan ma'lumot oladi." },
   { target: "openai", title: "OpenAI", hint: "AI javoblari va ovozni matnga aylantirish. Kalit, hisob balansi va model shu yerda tekshiriladi." },
   { target: "elevenlabs", title: "ElevenLabs", hint: "Matnni ovozga aylantirish. Oylik belgilar limiti ham ko'rsatiladi." },
+  { target: "agent", title: "AI agent (to'liq sinov)", hint: "Haqiqiy 'salom' xabari bilan butun agent zanjirini ishga tushiradi (prompt, toollar, OpenAI, baza). Telegram/qo'ng'iroqdagi xatoning aniq sababini ko'rsatadi." },
 ];
 
 function describeOk(h) {
   const parts = [`Ishlayapti · ${h.ms} ms`];
   if (h.model) parts.push(h.model);
+  if (h.reply) parts.push(`javob: "${h.reply}"`);
   if (h.limit != null) parts.push(`${h.used?.toLocaleString?.() ?? h.used} / ${h.limit.toLocaleString()} belgi`);
   return parts.join(" · ");
 }

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { setTimeout as delay } from "node:timers/promises";
 import { encodeWavFromInt16 } from "./wav.js";
 import { decodeMp3ToPcm } from "./ttsAudio.js";
+import { hangupChannelName } from "./hangupRealtime.js";
 
 // Asterisk's AudioSocket wire format: 1-byte frame type + 2-byte
 // big-endian payload length + payload. 0x01 carries the call's own UUID
@@ -66,9 +67,10 @@ function rmsPercent(frameBuffer) {
  * call the exact same /api/ai-call/* endpoints, and play back whatever
  * comes back. One instance per AudioSocket TCP connection. */
 export class CallSession {
-  constructor({ socket, authClient }) {
+  constructor({ socket, authClient, supabase }) {
     this.socket = socket;
     this.authClient = authClient;
+    this.supabase = supabase;
 
     this.sessionId = null;
     this.asteriskCallId = null;
@@ -88,6 +90,7 @@ export class CallSession {
     this.lastAiText = "";
     this.lastFillerKey = { question: "", confirm: "" };
     this.hangupCheckInterval = null;
+    this.hangupChannel = null;
   }
 
   sendFrame(type, payload = Buffer.alloc(0)) {
@@ -162,18 +165,28 @@ export class CallSession {
       return;
     }
 
-    // No server-push channel exists to reach this VPS process, so an
-    // admin's "Tugatish" click on Faol suhbatlar can only be delivered by
-    // having this side poll for it.
+    // Instant path: an admin's "Tugatish" click (see the main app's
+    // app/api/ai-call/hangup/route.js) broadcasts on this exact channel
+    // name over Supabase Realtime.
+    if (this.supabase) {
+      this.hangupChannel = this.supabase
+        .channel(hangupChannelName(this.sessionId))
+        .on("broadcast", { event: "hangup" }, () => this.end("admin hangup (realtime)"))
+        .subscribe();
+    }
+
+    // Slow fallback poll — also the only thing that checks the
+    // max-call-duration limit (see lib/aiCallCapacity.js's
+    // isHangupRequested), so this stays even with the broadcast above.
     this.hangupCheckInterval = setInterval(async () => {
       try {
         const res = await this.authClient.apiFetch(`/api/ai-call/hangup-check?sessionId=${this.sessionId}`);
         const data = await res.json();
-        if (data.hangup) this.end("admin hangup");
+        if (data.hangup) this.end("admin hangup (poll)");
       } catch {
-        // Best-effort — a missed poll just means the next one 3s later checks again.
+        // Best-effort — a missed poll just means the next one checks again.
       }
-    }, 3000);
+    }, 30000);
 
     await this.playGreeting();
   }
@@ -358,6 +371,7 @@ export class CallSession {
     this.armed = false;
     this.clearSilenceWatchdog();
     if (this.hangupCheckInterval) clearInterval(this.hangupCheckInterval);
+    if (this.hangupChannel) this.supabase?.removeChannel(this.hangupChannel);
     console.log(`[sip-bridge] call ended (${reason}): session=${this.sessionId}`);
     if (this.sessionId) {
       this.authClient.apiFetch(`/api/ai-call/end?sessionId=${this.sessionId}`, { method: "POST" }).catch(() => {});

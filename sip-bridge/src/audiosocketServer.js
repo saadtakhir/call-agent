@@ -6,14 +6,14 @@ import { CallSession } from "./callSession.js";
  * length-prefixed (1-byte type + 2-byte big-endian length + payload), so
  * incoming TCP chunks are buffered and re-sliced into whole frames here
  * before being handed to a CallSession one at a time. */
-export function startAudioSocketServer({ port, authClient }) {
+export function startAudioSocketServer({ port, authClient, supabase }) {
   // Tracked so the heartbeat (see heartbeat.js) can report how many calls
   // are currently live — the app has no other way to know this, since it
   // can't reach into the VPS itself.
   const activeSessions = new Set();
 
   const server = net.createServer((socket) => {
-    const session = new CallSession({ socket, authClient });
+    const session = new CallSession({ socket, authClient, supabase });
     activeSessions.add(session);
     let buffer = Buffer.alloc(0);
 

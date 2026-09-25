@@ -1,7 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createClient } from "@supabase/supabase-js";
 import { Phone, PhoneOff, Loader2, Download } from "lucide-react";
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from "@/lib/supabasePublicConfig";
+
+// A shared client is fine to create once at module scope — it holds no
+// per-call state itself, just the connection Realtime channels attach to.
+const supabase = SUPABASE_URL && SUPABASE_ANON_KEY ? createClient(SUPABASE_URL, SUPABASE_ANON_KEY) : null;
 
 // Lightweight amplitude-threshold VAD (voice activity detection), not a
 // real ML model — good enough to feel like a live call for this
@@ -153,7 +159,14 @@ export default function AiCallWidget() {
 
   const timerIntervalRef = useRef(null);
   const callStartRef = useRef(0);
-  const hangupCheckIntervalRef = useRef(null); // polls for an admin-triggered forced hangup (see Faol suhbatlar)
+  // Slow (30s) fallback poll — the primary path is the Supabase Realtime
+  // broadcast below (hangupChannelRef), which delivers an admin's
+  // "Tugatish" click within a second or two; this just catches the rare
+  // case where that broadcast is missed, and is still the only thing that
+  // checks the max-call-duration limit (see lib/aiCallCapacity.js's
+  // isHangupRequested).
+  const hangupCheckIntervalRef = useRef(null);
+  const hangupChannelRef = useRef(null);
 
   // Full-call recording: both the mic (via the same graph the VAD already
   // uses) and every played AI reply are routed into one shared
@@ -593,18 +606,26 @@ export default function AiCallWidget() {
         setElapsedSec(Math.floor((Date.now() - callStartRef.current) / 1000));
       }, 1000);
 
-      // No server-push channel exists to reach a live browser tab, so an
-      // admin's "Tugatish" click on Faol suhbatlar can only be delivered
-      // by having this side poll for it.
+      // Instant path: an admin's "Tugatish" click (see
+      // app/api/ai-call/hangup/route.js) broadcasts on this exact channel
+      // name — see lib/callHangupRealtime.js.
+      if (supabase) {
+        hangupChannelRef.current = supabase
+          .channel(`call-hangup:${sessionIdRef.current}`)
+          .on("broadcast", { event: "hangup" }, () => endCall())
+          .subscribe();
+      }
+
+      // Slow fallback poll — see hangupCheckIntervalRef's doc comment.
       hangupCheckIntervalRef.current = setInterval(async () => {
         try {
           const res = await fetch(`/api/ai-call/hangup-check?sessionId=${sessionIdRef.current}`);
           const data = await res.json();
           if (data.hangup) endCall();
         } catch {
-          // Best-effort — a missed poll just means the next one 3s later checks again.
+          // Best-effort — a missed poll just means the next one checks again.
         }
-      }, 3000);
+      }, 30000);
 
       await playGreeting();
     } catch (err) {
@@ -622,6 +643,10 @@ export default function AiCallWidget() {
     clearSilenceWatchdog();
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
     if (hangupCheckIntervalRef.current) clearInterval(hangupCheckIntervalRef.current);
+    if (hangupChannelRef.current) {
+      supabase?.removeChannel(hangupChannelRef.current);
+      hangupChannelRef.current = null;
+    }
     processorRef.current?.disconnect();
     silentGainRef.current?.disconnect();
     streamRef.current?.getTracks().forEach((t) => t.stop());

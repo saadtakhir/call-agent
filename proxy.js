@@ -109,7 +109,10 @@ function buildCsp(nonce) {
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data: blob:",
     "media-src 'self' blob:",
-    "connect-src 'self'",
+    // Supabase Realtime (instant "Tugatish" + live Faol suhbatlar) — see
+    // lib/callHangupRealtime.js. The websocket needs wss:// listed
+    // explicitly; 'self' only covers this same origin.
+    "connect-src 'self' https://*.supabase.co wss://*.supabase.co",
     "font-src 'self'",
     "frame-ancestors 'none'",
     "base-uri 'self'",

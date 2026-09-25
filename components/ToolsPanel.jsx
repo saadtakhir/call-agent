@@ -337,6 +337,7 @@ const CHECKS = [
   { target: "property", title: "Mulklar API (uy-joy.uz)", hint: "get_property_info shu manzildan ma'lumot oladi." },
   { target: "openai", title: "OpenAI", hint: "AI javoblari va ovozni matnga aylantirish. Kalit, hisob balansi va model shu yerda tekshiriladi." },
   { target: "elevenlabs", title: "ElevenLabs", hint: "Matnni ovozga aylantirish. Oylik belgilar limiti ham ko'rsatiladi." },
+  { target: "idpath", title: "Mulk ID yo'li (bosqichma-bosqich)", hint: "ID aytilganda sodir bo'ladigan ishlarni (baza, uy-joy, audio) alohida vaqt bilan o'lchaydi. Sekinlik yoki uzilish qaysi bosqichdaligini ko'rsatadi." },
   { target: "agent", title: "AI agent (to'liq sinov)", hint: "Haqiqiy 'salom' xabari bilan butun agent zanjirini ishga tushiradi (prompt, toollar, OpenAI, baza). Telegram/qo'ng'iroqdagi xatoning aniq sababini ko'rsatadi." },
 ];
 
@@ -460,6 +461,22 @@ export default function ToolsPanel() {
                 {checking[chk.target] ? <Loader2 size={14} className="spin" /> : <Activity size={14} />}
                 Tekshirish
               </button>
+              {h?.stages && (
+                <div style={{ flexBasis: "100%", fontSize: "0.8rem", paddingLeft: 28 }}>
+                  {h.stages.map((s, i) => (
+                    <div key={i} style={{ color: s.ok ? undefined : "var(--danger, #c0392b)" }}>
+                      {s.ok ? "✓" : "✗"} {s.name} — <strong>{s.ms} ms</strong>
+                      {s.detail ? <span className="muted"> · {s.detail}</span> : null}
+                    </div>
+                  ))}
+                  {h.ms != null && (
+                    <div style={{ marginTop: 4 }}>
+                      Jami: <strong>{h.ms} ms</strong>
+                      {h.note ? <span className="muted"> · {h.note}</span> : null}
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           );
         })}

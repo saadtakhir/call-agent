@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Menu, X, PhoneCall, Activity, History, Wallet, Settings, Users, LogOut } from "lucide-react";
+import { Menu, X, PhoneCall, Activity, History, Wallet, BookOpenText, Settings, Users, LogOut } from "lucide-react";
 import ThemeToggle from "./ThemeToggle";
 import ExchangeRateBadge from "./ExchangeRateBadge";
 
@@ -12,6 +12,8 @@ const LINKS = [
   { href: "/faol-suhbatlar", label: "Faol suhbatlar", icon: Activity, permission: "view_dashboard" },
   { href: "/qongiroqlar-tarixi", label: "Qo'ng'iroqlar tarixi", icon: History, permission: "view_call_history" },
   { href: "/xarajatlar", label: "Xarajatlar", icon: Wallet, permission: "view_costs" },
+  // No permission: a read-only reference open to any signed-in user.
+  { href: "/qoidalar", label: "Qoidalar", icon: BookOpenText, permission: null },
   { href: "/ai-qongiroq-sozlamalar", label: "Sozlamalar", icon: Settings, permission: "manage_settings" },
   { href: "/foydalanuvchilar", label: "Foydalanuvchilar", icon: Users, permission: "manage_users" },
 ];
@@ -37,7 +39,7 @@ export default function Sidebar({ user }) {
     router.refresh();
   }
 
-  const links = LINKS.filter((link) => user.permissions.includes(link.permission));
+  const links = LINKS.filter((link) => !link.permission || user.permissions.includes(link.permission));
 
   return (
     <>

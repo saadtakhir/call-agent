@@ -108,7 +108,10 @@ export async function POST(request) {
     });
 
     await sendTelegramMessage(chatId, reply);
-  } catch {
+  } catch (err) {
+    // Logged so the real cause shows up in Vercel logs — the caller only ever
+    // sees the generic apology below.
+    console.error("[telegram] turn failed:", err);
     await sendTelegramMessage(chatId, "Kechirasiz, javob tayyorlashda xatolik yuz berdi. Birozdan so'ng qayta urinib ko'ring.").catch(() => {});
   }
 

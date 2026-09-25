@@ -333,6 +333,19 @@ function CustomCard({ tool, stat, open, onToggleOpen, onChange, onDelete }) {
   );
 }
 
+const CHECKS = [
+  { target: "property", title: "Mulklar API (uy-joy.uz)", hint: "get_property_info shu manzildan ma'lumot oladi." },
+  { target: "openai", title: "OpenAI", hint: "AI javoblari va ovozni matnga aylantirish. Kalit, hisob balansi va model shu yerda tekshiriladi." },
+  { target: "elevenlabs", title: "ElevenLabs", hint: "Matnni ovozga aylantirish. Oylik belgilar limiti ham ko'rsatiladi." },
+];
+
+function describeOk(h) {
+  const parts = [`Ishlayapti · ${h.ms} ms`];
+  if (h.model) parts.push(h.model);
+  if (h.limit != null) parts.push(`${h.used?.toLocaleString?.() ?? h.used} / ${h.limit.toLocaleString()} belgi`);
+  return parts.join(" · ");
+}
+
 /** Settings tab for everything about the AI agent's tools — see lib/aiTools.js. */
 export default function ToolsPanel() {
   const { confirm, dialog } = useConfirm();
@@ -345,8 +358,9 @@ export default function ToolsPanel() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
-  const [health, setHealth] = useState(null);
-  const [checking, setChecking] = useState(false);
+  // Per-target result / pending state for the connection checks, keyed by target name.
+  const [health, setHealth] = useState({});
+  const [checking, setChecking] = useState({});
 
   useEffect(() => {
     (async () => {
@@ -391,15 +405,16 @@ export default function ToolsPanel() {
     }
   }
 
-  async function checkHealth() {
-    setChecking(true);
+  async function checkHealth(target) {
+    setChecking((c) => ({ ...c, [target]: true }));
     try {
-      const res = await fetch("/api/ai-call/tools/health");
-      setHealth(await res.json());
+      const res = await fetch(`/api/ai-call/tools/health?target=${target}`);
+      const result = await res.json();
+      setHealth((h) => ({ ...h, [target]: result }));
     } catch (err) {
-      setHealth({ ok: false, error: err.message });
+      setHealth((h) => ({ ...h, [target]: { ok: false, error: err.message } }));
     } finally {
-      setChecking(false);
+      setChecking((c) => ({ ...c, [target]: false }));
     }
   }
 
@@ -420,21 +435,32 @@ export default function ToolsPanel() {
 
       {error && <div className="error-banner">{error}</div>}
 
-      <div className="card" style={{ marginBottom: 20, display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
-        <Activity size={18} />
-        <div style={{ flex: 1, minWidth: 200 }}>
-          <div style={{ fontWeight: 600 }}>Mulklar API holati (uy-joy.uz)</div>
-          <div className="muted" style={{ fontSize: "0.8rem" }}>get_property_info shu manzildan ma&apos;lumot oladi.</div>
-        </div>
-        {health && (
-          <span className={`status-pill ${health.ok ? "status-green" : "status-amber"}`}>
-            {health.ok ? `Ishlayapti · ${health.ms} ms` : `Ishlamayapti${health.error ? `: ${health.error}` : ""}`}
-          </span>
-        )}
-        <button className="btn btn-outline" onClick={checkHealth} disabled={checking} type="button">
-          {checking ? <Loader2 size={14} className="spin" /> : <Activity size={14} />}
-          Tekshirish
-        </button>
+      <div className="card" style={{ marginBottom: 20 }}>
+        <div style={{ fontWeight: 600, marginBottom: 6 }}>Ulanishlar holati</div>
+        {CHECKS.map((chk) => {
+          const h = health[chk.target];
+          return (
+            <div
+              key={chk.target}
+              style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap", padding: "10px 0", borderTop: "1px solid var(--border)" }}
+            >
+              <Activity size={16} />
+              <div style={{ flex: 1, minWidth: 200 }}>
+                <div style={{ fontWeight: 600, fontSize: "0.9rem" }}>{chk.title}</div>
+                <div className="muted" style={{ fontSize: "0.78rem" }}>{chk.hint}</div>
+              </div>
+              {h && (
+                <span className={`status-pill ${h.ok ? "status-green" : "status-amber"}`} style={{ maxWidth: 420, whiteSpace: "normal" }}>
+                  {h.ok ? describeOk(h) : `Xato${h.error ? `: ${h.error}` : ""}`}
+                </span>
+              )}
+              <button className="btn btn-outline" onClick={() => checkHealth(chk.target)} disabled={checking[chk.target]} type="button">
+                {checking[chk.target] ? <Loader2 size={14} className="spin" /> : <Activity size={14} />}
+                Tekshirish
+              </button>
+            </div>
+          );
+        })}
       </div>
 
       <h3 style={{ margin: "0 0 10px" }}>Tayyor toollar</h3>

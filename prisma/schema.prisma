@@ -133,3 +133,17 @@ model PropertyReplyAudio {
   audioUrl   String
   updatedAt  DateTime @updatedAt
 }
+
+/** One row per AI tool call (built-in or custom, see lib/aiTools.js) — powers
+ * the per-tool call/error/latency stats on the Toollar settings tab. */
+model ToolCallLog {
+  id         Int      @id @default(autoincrement())
+  toolName   String
+  ok         Boolean
+  durationMs Int
+  error      String?
+  createdAt  DateTime @default(now())
+
+  @@index([toolName, createdAt])
+  @@index([createdAt])
+}

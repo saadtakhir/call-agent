@@ -29,6 +29,7 @@ const PATH_PERMISSIONS = [
   { prefix: "/api/ai-call/stt-provider", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/system-prompt", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/canned-responses", permission: PERMISSIONS.MANAGE_SETTINGS },
+  { prefix: "/api/ai-call/tools", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/max-concurrent-calls", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/max-call-duration", permission: PERMISSIONS.MANAGE_SETTINGS },
   { prefix: "/api/ai-call/sip-config", permission: PERMISSIONS.MANAGE_SETTINGS },

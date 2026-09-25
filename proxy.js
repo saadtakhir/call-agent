@@ -150,6 +150,20 @@ export function proxy(request) {
   const { pathname } = request.nextUrl;
   const isApi = pathname.startsWith("/api/");
 
+  // A call tab left open long after its login expired (or from another
+  // origin/account) keeps polling hangup-check every few seconds forever if it
+  // only ever gets a 401/403 — that client ignores errors and treats only
+  // {hangup:true} as "stop". So for THIS route, a request that would be
+  // refused answers {hangup:true} instead: the stale client ends its own call
+  // and its polling loop on the very next poll. Reveals nothing (the reply is
+  // the same for every refused request).
+  if (pathname === "/api/ai-call/hangup-check") {
+    const pollUser = getSessionUser(request.cookies.get(SESSION_COOKIE_NAME)?.value);
+    if (!pollUser || !hasPermission(pollUser, PERMISSIONS.VIEW_CALL) || !isAllowedOrigin(request)) {
+      return withCsp(NextResponse.json({ hangup: true }), nonce, csp);
+    }
+  }
+
   if (isApi && !isAllowedOrigin(request)) {
     return withCsp(NextResponse.json({ error: "Ruxsat etilmagan manba." }, { status: 403 }), nonce, csp);
   }

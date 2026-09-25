@@ -153,6 +153,9 @@ export default function AiCallWidget() {
   const fillerRef = useRef({ question: [], confirm: [] }); // Array<{ key, blob, text }> per type once loaded
   const fillerIndexRef = useRef({ question: 0, confirm: 0 }); // rotates through the loaded variants, no immediate repeat
   const lastAiTextRef = useRef(""); // the AI's most recent spoken line — checked for a trailing "to'g'rimi?"
+  // Language the call is in ("uz" | "ru" | "en") — follows what the AI last answered in, reported by
+  // /turn's X-Reply-Lang header. Decides which language the filler / silence clips are spoken in.
+  const langRef = useRef("uz");
 
   const silenceTimeoutRef = useRef(null);
   const silenceStrikeRef = useRef(0); // 0-2 = which silence prompt fires next; 3+ = next timeout hangs up
@@ -270,7 +273,7 @@ export default function AiCallWidget() {
     silenceStrikeRef.current += 1;
     armedRef.current = false;
     try {
-      const res = await fetch(`/api/ai-call/silence-check?stage=${stage}`);
+      const res = await fetch(`/api/ai-call/silence-check?stage=${stage}&lang=${langRef.current}`);
       if (!res.ok) throw new Error(`Xatolik (${res.status})`);
       const replyText = decodeURIComponent(res.headers.get("X-Reply-Text") || "");
       setLog((prev) => [...prev, { role: "ai", text: replyText }]);
@@ -324,7 +327,7 @@ export default function AiCallWidget() {
       let exclude = "";
       for (let i = 0; i < 3; i++) {
         try {
-          const res = await fetch(`/api/ai-call/filler?type=${type}&exclude=${encodeURIComponent(exclude)}`);
+          const res = await fetch(`/api/ai-call/filler?type=${type}&lang=${langRef.current}&exclude=${encodeURIComponent(exclude)}`);
           if (!res.ok) break;
           const key = res.headers.get("X-Filler-Key") || "";
           const text = decodeURIComponent(res.headers.get("X-Reply-Text") || "");
@@ -466,7 +469,7 @@ export default function AiCallWidget() {
       // triggers a get_property_info search (see the system prompt's
       // section 4), so that's the moment worth a "qidiryapman" filler
       // instead of the plain generic one.
-      const fillerType = lastAiTextRef.current.trim().endsWith("to'g'rimi?") ? "confirm" : "question";
+      const fillerType = /(to['‘’ʻ]g['‘’ʻ]rimi|правильно|верно|correct|right)\?$/i.test(lastAiTextRef.current.trim()) ? "confirm" : "question";
       // A short "question"-type utterance is very likely a brief "rahmat,
       // xayr" — see SHORT_UTTERANCE_MS's doc comment for why that skips
       // the filler entirely rather than playing a "let me think" line in
@@ -488,6 +491,13 @@ export default function AiCallWidget() {
         throw new Error(data.error || `Xatolik (${res.status})`);
       }
 
+      // The call may have switched language this turn — reload the fillers in the new one so the
+      // NEXT wait is spoken in it (a turn already waiting keeps the ones it started with).
+      const replyLang = res.headers.get("X-Reply-Lang") || "uz";
+      if (replyLang !== langRef.current) {
+        langRef.current = replyLang;
+        prefetchFillers();
+      }
       const transcript = decodeURIComponent(res.headers.get("X-Transcript") || "");
       const replyText = decodeURIComponent(res.headers.get("X-Reply-Text") || "");
       setLog((prev) => [...prev, { role: "user", text: transcript }, { role: "ai", text: replyText }]);
@@ -608,6 +618,7 @@ export default function AiCallWidget() {
       fillerRef.current = { question: [], confirm: [] };
       fillerIndexRef.current = { question: 0, confirm: 0 };
       lastAiTextRef.current = "";
+      langRef.current = "uz";
       prefetchFillers(); // fire-and-forget, loads alongside the greeting below
 
       callStartRef.current = Date.now();

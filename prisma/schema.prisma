@@ -89,6 +89,12 @@ model AiCallSession {
   // if the caller's number itself was withheld/unavailable.
   callerNumber String?
 
+  // Language the AI last replied in ("uz" | "ru" | "en", see lib/language.js) —
+  // decides how the caller's NEXT utterance is transcribed, since Muxlisa (the
+  // default STT) only understands Uzbek. Starts as "uz" (every call opens with
+  // the Uzbek greeting).
+  language String @default("uz")
+
   // Set by the "Tugatish" button on Faol suhbatlar (see
   // lib/aiCallCapacity.js's requestHangup) and polled by both the widget
   // and sip-bridge during an active call — there's no server-push

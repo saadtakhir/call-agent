@@ -88,6 +88,9 @@ export class CallSession {
     this.silenceStrike = 0;
 
     this.lastAiText = "";
+    // Language the call is in ("uz" | "ru" | "en") — follows what the AI last answered in, from
+    // /turn's x-reply-lang header; fillers and silence check-ins are spoken in it.
+    this.lang = "uz";
     this.lastFillerKey = { question: "", confirm: "" };
     this.hangupCheckInterval = null;
     this.hangupChannel = null;
@@ -233,7 +236,7 @@ export class CallSession {
     this.silenceStrike += 1;
     this.armed = false;
     try {
-      const res = await this.authClient.apiFetch(`/api/ai-call/silence-check?stage=${stage}`);
+      const res = await this.authClient.apiFetch(`/api/ai-call/silence-check?stage=${stage}&lang=${this.lang}`);
       if (!res.ok) throw new Error(`silence-check failed (${res.status})`);
       this.lastAiText = decodeURIComponent(res.headers.get("x-reply-text") || "");
       const mp3 = Buffer.from(await res.arrayBuffer());
@@ -306,7 +309,7 @@ export class CallSession {
       // Mirrors AiCallWidget.jsx: a trailing "to'g'rimi?" means the caller
       // is confirming, which is what actually triggers a property search,
       // worth calling out with a more specific filler than the generic one.
-      const fillerType = this.lastAiText.trim().endsWith("to'g'rimi?") ? "confirm" : "question";
+      const fillerType = /(to['‘’ʻ]g['‘’ʻ]rimi|правильно|верно|correct|right)\?$/i.test(this.lastAiText.trim()) ? "confirm" : "question";
       const skipFiller = fillerType === "question" && speechDurationMs < SHORT_UTTERANCE_MS;
       if (!settled && !skipFiller) {
         await this.playFiller(fillerType);
@@ -317,6 +320,7 @@ export class CallSession {
         const data = await res.json().catch(() => ({}));
         throw new Error(data.error || `turn failed (${res.status})`);
       }
+      this.lang = res.headers.get("x-reply-lang") || "uz";
       const transcript = decodeURIComponent(res.headers.get("x-transcript") || "");
       const replyText = decodeURIComponent(res.headers.get("x-reply-text") || "");
       console.log(`[sip-bridge] caller: ${transcript}`);
@@ -333,7 +337,7 @@ export class CallSession {
   async playFiller(type) {
     try {
       const exclude = this.lastFillerKey[type];
-      const res = await this.authClient.apiFetch(`/api/ai-call/filler?type=${type}&exclude=${encodeURIComponent(exclude)}`);
+      const res = await this.authClient.apiFetch(`/api/ai-call/filler?type=${type}&lang=${this.lang}&exclude=${encodeURIComponent(exclude)}`);
       if (!res.ok) return;
       const text = decodeURIComponent(res.headers.get("x-reply-text") || "");
       // Remembered so the NEXT turn's filler of this same type (if the

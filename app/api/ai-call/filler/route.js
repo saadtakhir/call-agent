@@ -15,6 +15,14 @@ export const maxDuration = 30;
 // /ai-qongiroq-sozlamalar's Tayyor javoblar tab — only "thinking_filler"
 // and "searching_filler" ship by default) so a long call doesn't hear the
 // exact same "Bir daqiqa..." every single turn.
+// Russian/English calls (the call`s language follows what the AI last answered
+// in, see AiCallSession.language) use these plain lines via live TTS instead of
+// the Uzbek canned clips.
+const FALLBACK_BY_LANGUAGE = {
+  question: { ru: "Одну минуту...", en: "One moment..." },
+  confirm: { ru: "Немного подождите, ищу...", en: "Please wait a moment, I'm searching..." },
+};
+
 const FILLER_TYPES = {
   question: {
     keys: ["thinking_filler", "thinking_filler_2", "thinking_filler_3"],
@@ -38,11 +46,14 @@ export async function GET(request) {
   try {
     const type = request.nextUrl.searchParams.get("type") === "confirm" ? "confirm" : "question";
     const exclude = request.nextUrl.searchParams.get("exclude") || "";
-    const { keys, fallbackText } = FILLER_TYPES[type];
+    const lang = ["ru", "en"].includes(request.nextUrl.searchParams.get("lang")) ? request.nextUrl.searchParams.get("lang") : "uz";
+    const { keys } = FILLER_TYPES[type];
+    const fallbackText = lang === "uz" ? FILLER_TYPES[type].fallbackText : FALLBACK_BY_LANGUAGE[type][lang];
 
+    // Canned clips are Uzbek recordings — never used for a Russian/English call.
     const candidates = (
       await Promise.all(
-        keys.map(async (key) => {
+        (lang === "uz" ? keys : []).map(async (key) => {
           const canned = await getCannedResponseByKey(key);
           return canned ? { key, ...canned } : null;
         })

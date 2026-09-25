@@ -3,7 +3,7 @@ import { transcribeAudio, streamElevenLabsSpeech, toSpokenForm } from "@/lib/aiC
 import { runAgentTurn } from "@/lib/aiCallAgent";
 import { findCannedAudioUrl } from "@/lib/cannedResponses";
 import { wavDurationSeconds, recordCallUsage } from "@/lib/callUsage";
-import { isSessionActive } from "@/lib/aiCallCapacity";
+import { getActiveSession } from "@/lib/aiCallCapacity";
 
 export const maxDuration = 60;
 
@@ -34,17 +34,20 @@ export async function POST(request) {
     // Blocks a caller from skipping straight to this (billable) endpoint
     // with a made-up sessionId that never actually reserved a slot via
     // /api/ai-call/start — see isSessionActive's doc comment.
-    if (!(await isSessionActive(sessionId))) {
+    // Same lookup doubles as the source of the call's current language (the
+    // language the AI last answered in) — see AiCallSession.language.
+    const session = await getActiveSession(sessionId);
+    if (!session) {
       return NextResponse.json({ error: "Suhbat sessiyasi topilmadi yoki tugagan." }, { status: 403 });
     }
 
     const buffer = Buffer.from(await audio.arrayBuffer());
-    const transcript = await transcribeAudio(buffer, audio.name, audio.type);
+    const transcript = await transcribeAudio(buffer, audio.name, audio.type, { language: session.language });
     if (!transcript) {
       return NextResponse.json({ error: "Ovoz tushunilmadi, qayta urinib ko'ring." }, { status: 422 });
     }
 
-    const { reply, audioUrl, usage } = await runAgentTurn({ sessionId, transcript });
+    const { reply, audioUrl, usage, language } = await runAgentTurn({ sessionId, transcript });
 
     const cachedBuffer = audioUrl ? await fetchAudioBuffer(audioUrl) : null;
     let audioBody = cachedBuffer;
@@ -78,6 +81,9 @@ export async function POST(request) {
         "Content-Type": "audio/mpeg",
         "X-Transcript": encodeURIComponent(transcript),
         "X-Reply-Text": encodeURIComponent(reply),
+        // Lets the widget/sip-bridge play fillers and silence check-ins in the
+        // language the call is now in.
+        "X-Reply-Lang": language,
       },
     });
   } catch (err) {

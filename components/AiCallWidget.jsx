@@ -19,6 +19,17 @@ const START_THRESHOLD = 6; // RMS*100 of the mic signal — speech is well above
 const SILENCE_MS = 700; // how long a pause must last before a turn is considered "done"
 const MIN_SPEECH_MS = 400; // shorter than this is treated as noise, not speech, and discarded
 
+// Someone dictating a phone number pauses between digit groups for well over
+// SILENCE_MS, which used to end the turn mid-number. While the AI's last line
+// is asking for a phone number (and isn't the "...to'g'rimi?" read-back), wait
+// longer before treating a pause as the end of the turn.
+const SILENCE_PHONE_MS = 2500;
+const CONFIRM_QUESTION_RE = /(to['‘’ʻ]g['‘’ʻ]rimi|правильно|верно|correct|right)\?$/i;
+function silenceLimitMs(lastAiText) {
+  const t = String(lastAiText || "").trim();
+  return /(telefon|телефон|phone)/i.test(t) && !CONFIRM_QUESTION_RE.test(t) ? SILENCE_PHONE_MS : SILENCE_MS;
+}
+
 // A voice call has no visual "your turn" cue the way a chat UI does, so if
 // the caller just never says anything (not a mid-utterance pause — SILENCE_MS
 // above handles that — but total silence while "listening"), the widget
@@ -418,7 +429,7 @@ export default function AiCallWidget() {
 
     recordedChunksRef.current.push(chunk);
     if (volume > START_THRESHOLD) lastLoudRef.current = now;
-    if (now - lastLoudRef.current > SILENCE_MS) {
+    if (now - lastLoudRef.current > silenceLimitMs(lastAiTextRef.current)) {
       isRecordingRef.current = false;
       const speechDurationMs = lastLoudRef.current - speechStartRef.current;
       const discard = speechDurationMs < MIN_SPEECH_MS;

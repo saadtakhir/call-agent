@@ -20,6 +20,17 @@ const FRAME_BYTES = (SAMPLE_RATE * FRAME_MS * 2) / 1000; // 320 bytes = 160 int1
 const START_THRESHOLD = 6;
 const SILENCE_MS = 700;
 const MIN_SPEECH_MS = 400;
+
+// Someone dictating a phone number pauses between digit groups for well over
+// SILENCE_MS, which used to end the turn mid-number. While the AI's last line
+// is asking for a phone number (and isn't the "...to'g'rimi?" read-back), wait
+// longer before treating a pause as the end of the turn.
+const SILENCE_PHONE_MS = 2500;
+const CONFIRM_QUESTION_RE = /(to['‘’ʻ]g['‘’ʻ]rimi|правильно|верно|correct|right)\?$/i;
+function silenceLimitMs(lastAiText) {
+  const t = String(lastAiText || "").trim();
+  return /(telefon|телефон|phone)/i.test(t) && !CONFIRM_QUESTION_RE.test(t) ? SILENCE_PHONE_MS : SILENCE_MS;
+}
 const PRE_ROLL_FRAMES = 20; // 20 * 20ms = 400ms, matching the widget's ~350ms pre-roll
 
 // How long the caller can stay fully silent (not mid-utterance — SILENCE_MS
@@ -269,7 +280,7 @@ export class CallSession {
 
     this.recordedFrames.push(payload);
     if (volume > START_THRESHOLD) this.lastLoudMs = now;
-    if (now - this.lastLoudMs > SILENCE_MS) {
+    if (now - this.lastLoudMs > silenceLimitMs(this.lastAiText)) {
       this.isRecording = false;
       const speechDurationMs = this.lastLoudMs - this.speechStartMs;
       const discard = speechDurationMs < MIN_SPEECH_MS;

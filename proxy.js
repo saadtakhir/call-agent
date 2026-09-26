@@ -151,20 +151,14 @@ export function proxy(request, event) {
   const { pathname } = request.nextUrl;
   const isApi = pathname.startsWith("/api/");
 
-  // A call tab left open long after its login expired (or from another
-  // origin/account) keeps polling hangup-check every few seconds forever if it
-  // only ever gets a 401/403 — that client ignores errors and treats only
-  // {hangup:true} as "stop". So for THIS route, a request that would be
-  // refused answers {hangup:true} instead: the stale client ends its own call
-  // and its polling loop on the very next poll. Reveals nothing (the reply is
-  // the same for every refused request).
+  // Retired endpoint: clients no longer poll it (Realtime delivers "Tugatish",
+  // a client-side timer enforces the max duration). Old tabs/bridges still
+  // running the previous code get {hangup:true} so they end their call and
+  // stop polling; no auth or DB work here. A ~5% sample is logged so any
+  // remaining source can be identified.
   if (pathname === "/api/ai-call/hangup-check") {
-    const pollUser = getSessionUser(request.cookies.get(SESSION_COOKIE_NAME)?.value);
-    if (!pollUser || !hasPermission(pollUser, PERMISSIONS.VIEW_CALL) || !isAllowedOrigin(request)) {
-      const reason = !pollUser ? "refused: no valid login" : !hasPermission(pollUser, PERMISSIONS.VIEW_CALL) ? "refused: no permission" : "refused: origin";
-      event?.waitUntil?.(recordPollProbe(request, reason, request.nextUrl.searchParams.get("sessionId")));
-      return withCsp(NextResponse.json({ hangup: true }), nonce, csp);
-    }
+    event?.waitUntil?.(recordPollProbe(request, "retired endpoint", request.nextUrl.searchParams.get("sessionId")));
+    return withCsp(NextResponse.json({ hangup: true }), nonce, csp);
   }
 
   if (isApi && !isAllowedOrigin(request)) {

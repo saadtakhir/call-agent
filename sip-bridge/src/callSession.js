@@ -92,7 +92,8 @@ export class CallSession {
     // /turn's x-reply-lang header; fillers and silence check-ins are spoken in it.
     this.lang = "uz";
     this.lastFillerKey = { question: "", confirm: "" };
-    this.hangupCheckInterval = null;
+    this.maxDurationTimeout = null;
+    this.maxDurationMinutes = 0;
     this.hangupChannel = null;
   }
 
@@ -153,6 +154,10 @@ export class CallSession {
       const params = new URLSearchParams({ sessionId: this.sessionId, channel: "sip" });
       if (this.callerNumber) params.set("callerNumber", this.callerNumber);
       const res = await this.authClient.apiFetch(`/api/ai-call/start?${params}`);
+      if (res.ok) {
+        const started = await res.json().catch(() => ({}));
+        this.maxDurationMinutes = Number(started.maxDurationMinutes) || 0;
+      }
       if (!res.ok) {
         // No generic "speak this text" endpoint exists outside an active
         // session, so a caller hitting capacity just hears nothing before
@@ -178,18 +183,11 @@ export class CallSession {
         .subscribe();
     }
 
-    // Slow fallback poll — also the only thing that checks the
-    // max-call-duration limit (see lib/aiCallCapacity.js's
-    // isHangupRequested), so this stays even with the broadcast above.
-    this.hangupCheckInterval = setInterval(async () => {
-      try {
-        const res = await this.authClient.apiFetch(`/api/ai-call/hangup-check?sessionId=${this.sessionId}`);
-        const data = await res.json();
-        if (data.hangup) this.end("admin hangup (poll)");
-      } catch {
-        // Best-effort — a missed poll just means the next one checks again.
-      }
-    }, 30000);
+    // Max-call-duration limit: one timer, no polling (the server returns
+    // the limit from /start).
+    if (this.maxDurationMinutes > 0) {
+      this.maxDurationTimeout = setTimeout(() => this.end("max duration"), this.maxDurationMinutes * 60 * 1000);
+    }
 
     await this.playGreeting();
   }
@@ -374,7 +372,7 @@ export class CallSession {
     this.ended = true;
     this.armed = false;
     this.clearSilenceWatchdog();
-    if (this.hangupCheckInterval) clearInterval(this.hangupCheckInterval);
+    if (this.maxDurationTimeout) clearTimeout(this.maxDurationTimeout);
     if (this.hangupChannel) this.supabase?.removeChannel(this.hangupChannel);
     console.log(`[sip-bridge] call ended (${reason}): session=${this.sessionId}`);
     if (this.sessionId) {

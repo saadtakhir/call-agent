@@ -3,13 +3,8 @@
 import { useEffect, useState } from "react";
 import { Loader2 } from "lucide-react";
 
-/** Live-editable cap on how long a single call may run (see
- * lib/aiCallCapacity.js's isHangupRequested) — both the widget and
- * sip-bridge already poll for an admin-triggered hangup every 3s, so a
- * call exceeding this gets forced closed on that same channel, no
- * separate mechanism needed. Exists because a browser tab that misses its
- * pagehide beacon (crashed, force-quit, ...) would otherwise sit "active"
- * for however long it happened to stay open. */
+/** Live-editable cap on how long a single call may run — the widget and
+ * sip-bridge get it from /api/ai-call/start and end the call with a timer. */
 export default function MaxCallDurationPanel() {
   const [value, setValue] = useState("");
   const [saved, setSaved] = useState(null);

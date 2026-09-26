@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { tryStartCall, endCallSession, getMaxConcurrentCalls } from "@/lib/aiCallCapacity";
+import { tryStartCall, endCallSession, getMaxConcurrentCalls, getMaxCallDurationMinutes } from "@/lib/aiCallCapacity";
 import { checkRateLimit } from "@/lib/rateLimit";
 import { getClientIp } from "@/lib/loginAttempts";
 import { getSessionUser, SESSION_COOKIE_NAME } from "@/lib/auth";
@@ -53,7 +53,7 @@ export async function GET(request) {
       return NextResponse.json({ error: "Juda ko'p qo'ng'iroq boshlandi. Birozdan so'ng qayta urinib ko'ring." }, { status: 429 });
     }
 
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ ok: true, maxDurationMinutes: await getMaxCallDurationMinutes() });
   } catch (err) {
     return NextResponse.json({ error: err.message }, { status: 500 });
   }

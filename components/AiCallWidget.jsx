@@ -162,13 +162,10 @@ export default function AiCallWidget() {
 
   const timerIntervalRef = useRef(null);
   const callStartRef = useRef(0);
-  // Slow (30s) fallback poll — the primary path is the Supabase Realtime
-  // broadcast below (hangupChannelRef), which delivers an admin's
-  // "Tugatish" click within a second or two; this just catches the rare
-  // case where that broadcast is missed, and is still the only thing that
-  // checks the max-call-duration limit (see lib/aiCallCapacity.js's
-  // isHangupRequested).
-  const hangupCheckIntervalRef = useRef(null);
+  // Max-call-duration limit, enforced right here with a single timer (the
+  // server sends the limit back from /api/ai-call/start) — no polling.
+  const maxDurationTimeoutRef = useRef(null);
+  const maxDurationMinutesRef = useRef(0);
   const hangupChannelRef = useRef(null);
   const greetingPrefetchRef = useRef(null); // Promise<Response|null> started at call start, see startCall
 
@@ -546,6 +543,8 @@ export default function AiCallWidget() {
       try {
         const capacityRes = await fetch(`/api/ai-call/start?sessionId=${newSessionId}`);
         if (capacityRes.ok) {
+          const started = await capacityRes.json().catch(() => ({}));
+          maxDurationMinutesRef.current = Number(started.maxDurationMinutes) || 0;
           gotSlot = true;
           break;
         }
@@ -637,16 +636,9 @@ export default function AiCallWidget() {
           .subscribe();
       }
 
-      // Slow fallback poll — see hangupCheckIntervalRef's doc comment.
-      hangupCheckIntervalRef.current = setInterval(async () => {
-        try {
-          const res = await fetch(`/api/ai-call/hangup-check?sessionId=${sessionIdRef.current}`);
-          const data = await res.json();
-          if (data.hangup) endCall();
-        } catch {
-          // Best-effort — a missed poll just means the next one checks again.
-        }
-      }, 30000);
+      if (maxDurationMinutesRef.current > 0) {
+        maxDurationTimeoutRef.current = setTimeout(() => endCall(), maxDurationMinutesRef.current * 60 * 1000);
+      }
 
       await playGreeting();
     } catch (err) {
@@ -663,7 +655,7 @@ export default function AiCallWidget() {
     armedRef.current = false;
     clearSilenceWatchdog();
     if (timerIntervalRef.current) clearInterval(timerIntervalRef.current);
-    if (hangupCheckIntervalRef.current) clearInterval(hangupCheckIntervalRef.current);
+    if (maxDurationTimeoutRef.current) clearTimeout(maxDurationTimeoutRef.current);
     if (hangupChannelRef.current) {
       supabase?.removeChannel(hangupChannelRef.current);
       hangupChannelRef.current = null;

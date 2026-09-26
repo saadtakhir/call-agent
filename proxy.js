@@ -1,6 +1,7 @@
 import crypto from "node:crypto";
 import { NextResponse } from "next/server";
 import { getSessionUser, hasPermission, PERMISSIONS, SESSION_COOKIE_NAME } from "./lib/auth.js";
+import { recordPollProbe } from "./lib/pollProbe.js";
 
 // Next.js 16 renamed Middleware to Proxy — same file-convention slot, same
 // behavior, just a new name/export. Defaults to the Node.js runtime, which
@@ -136,7 +137,7 @@ function withCsp(response, nonce, csp) {
   return response;
 }
 
-export function proxy(request) {
+export function proxy(request, event) {
   const nonce = crypto.randomUUID().replace(/-/g, "");
   const csp = buildCsp(nonce);
   // Forwarded to the request Next.js's own rendering sees for THIS same
@@ -160,6 +161,8 @@ export function proxy(request) {
   if (pathname === "/api/ai-call/hangup-check") {
     const pollUser = getSessionUser(request.cookies.get(SESSION_COOKIE_NAME)?.value);
     if (!pollUser || !hasPermission(pollUser, PERMISSIONS.VIEW_CALL) || !isAllowedOrigin(request)) {
+      const reason = !pollUser ? "refused: no valid login" : !hasPermission(pollUser, PERMISSIONS.VIEW_CALL) ? "refused: no permission" : "refused: origin";
+      event?.waitUntil?.(recordPollProbe(request, reason, request.nextUrl.searchParams.get("sessionId")));
       return withCsp(NextResponse.json({ hangup: true }), nonce, csp);
     }
   }

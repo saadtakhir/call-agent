@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
+import { after } from "next/server";
 import { isHangupRequested } from "@/lib/aiCallCapacity";
+import { recordPollProbe } from "@/lib/pollProbe";
 
 // Polled every 30s (fallback only — the instant path is the Supabase
 // Realtime broadcast, see lib/callHangupRealtime.js) by the widget/sip-bridge
@@ -12,6 +14,7 @@ export async function GET(request) {
   if (!sessionId) return NextResponse.json({ error: "\"sessionId\" kerak." }, { status: 400 });
   try {
     const hangup = await isHangupRequested(sessionId);
+    after(() => recordPollProbe(request, hangup ? "answered: hangup" : "answered: continue", sessionId));
     return NextResponse.json({ hangup });
   } catch {
     // If the database can't even answer this, the call can't continue

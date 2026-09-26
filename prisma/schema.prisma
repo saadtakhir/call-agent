@@ -153,3 +153,19 @@ model ToolCallLog {
   @@index([toolName, createdAt])
   @@index([createdAt])
 }
+
+/** A ~5% sample of hangup-check requests (see proxy.js and that route) — a
+ * diagnostic for finding out WHO keeps polling it when the call volume can't
+ * explain the invocation count. Trimmed to 3 days; safe to drop once the
+ * source is found. */
+model PollProbe {
+  id              Int      @id @default(autoincrement())
+  at              DateTime @default(now())
+  reason          String
+  ip              String?
+  userAgent       String?
+  origin          String?
+  sessionIdPrefix String?
+
+  @@index([at])
+}

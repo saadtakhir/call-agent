@@ -26,10 +26,11 @@ const MIN_SPEECH_MS = 400;
 // is asking for a phone number (and isn't the "...to'g'rimi?" read-back), wait
 // longer before treating a pause as the end of the turn.
 const SILENCE_PHONE_MS = 2500;
+const PHONE_RE = /(telefon|телефон|phone)/i;
 const CONFIRM_QUESTION_RE = /(to['‘’ʻ]g['‘’ʻ]rimi|правильно|верно|correct|right)\?$/i;
 function silenceLimitMs(lastAiText) {
   const t = String(lastAiText || "").trim();
-  return /(telefon|телефон|phone)/i.test(t) && !CONFIRM_QUESTION_RE.test(t) ? SILENCE_PHONE_MS : SILENCE_MS;
+  return PHONE_RE.test(t) && !CONFIRM_QUESTION_RE.test(t) ? SILENCE_PHONE_MS : SILENCE_MS;
 }
 const PRE_ROLL_FRAMES = 20; // 20 * 20ms = 400ms, matching the widget's ~350ms pre-roll
 
@@ -318,8 +319,13 @@ export class CallSession {
       // Mirrors AiCallWidget.jsx: a trailing "to'g'rimi?" means the caller
       // is confirming, which is what actually triggers a property search,
       // worth calling out with a more specific filler than the generic one.
-      const fillerType = /(to['‘’ʻ]g['‘’ʻ]rimi|правильно|верно|correct|right)\?$/i.test(this.lastAiText.trim()) ? "confirm" : "question";
-      const skipFiller = fillerType === "question" && speechDurationMs < SHORT_UTTERANCE_MS;
+      // Confirming a read-back phone number saves an application, not a property
+      // search — so it gets the generic filler (and always plays it, even for a
+      // short "ha"/"yes"), not the "qidiryapman / searching" one.
+      const lastAi = this.lastAiText.trim();
+      const confirmingPhone = CONFIRM_QUESTION_RE.test(lastAi) && PHONE_RE.test(lastAi);
+      const fillerType = CONFIRM_QUESTION_RE.test(lastAi) && !confirmingPhone ? "confirm" : "question";
+      const skipFiller = fillerType === "question" && !confirmingPhone && speechDurationMs < SHORT_UTTERANCE_MS;
       if (!settled && !skipFiller) {
         await this.playFiller(fillerType);
       }

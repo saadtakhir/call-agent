@@ -326,6 +326,11 @@ export class CallSession {
       this.lastAiText = replyText;
       const mp3 = Buffer.from(await res.arrayBuffer());
       await this.playResponse(mp3);
+      if (res.headers.get("x-end-call") === "1") {
+        await delay(400); // let the last audio frames finish playing before hanging up
+        this.end("caller said goodbye");
+        return;
+      }
     } catch (err) {
       console.error(`[sip-bridge] turn failed: ${err.message}`);
     }

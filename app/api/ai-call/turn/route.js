@@ -47,7 +47,7 @@ export async function POST(request) {
       return NextResponse.json({ error: "Ovoz tushunilmadi, qayta urinib ko'ring." }, { status: 422 });
     }
 
-    const { reply, audioUrl, usage, language } = await runAgentTurn({ sessionId, transcript });
+    const { reply, audioUrl, usage, language, endCall } = await runAgentTurn({ sessionId, transcript });
 
     const cachedBuffer = audioUrl ? await fetchAudioBuffer(audioUrl) : null;
     let audioBody = cachedBuffer;
@@ -84,6 +84,8 @@ export async function POST(request) {
         // Lets the widget/sip-bridge play fillers and silence check-ins in the
         // language the call is now in.
         "X-Reply-Lang": language,
+        // The caller said goodbye — hang up once this reply has finished playing.
+        ...(endCall ? { "X-End-Call": "1" } : {}),
       },
     });
   } catch (err) {

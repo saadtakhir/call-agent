@@ -367,6 +367,12 @@ export default function AiCallWidget() {
       setLog((prev) => [...prev, { role: "ai", text: replyText }]);
       lastAiTextRef.current = replyText;
       const audioBlob = await res.blob();
+      if (res.headers.get("X-End-Call") === "1") {
+        setPhase("speaking");
+        await playBlob(audioBlob);
+        endCall();
+        return;
+      }
       await playAudioAndResume(audioBlob);
     } catch (err) {
       setError(err.message);
